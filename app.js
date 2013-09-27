@@ -9,12 +9,20 @@ var express = require('express')
   , http = require('http')
   , path = require('path');
 
-var relayApp = require('./lib/relay');
-
 var app = express();
 
-app.use(relayApp);
+var relayApp = require('./lib/relay');
 
+app.use(express.logger('dev'));
+app.use('/relay', relayApp);
+
+//partern one
+//app.use(expressapp);
+
+//partern two
+//app.all('/hello', relayApp);
+
+/*
 app.configure(function(){
   app.set('port', process.env.PORT || 3000);
   app.set('views', __dirname + '/views');
@@ -37,3 +45,7 @@ app.get('/users', user.list);
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));
 });
+*/
+
+app.listen('3000');
+console.log("Express server listening on port " + app.get('port'));
