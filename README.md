@@ -1,4 +1,7 @@
-Realy for Node.js
-=================
+Relay
+=====
 
-This is a Relay server implenntation for Node.js. For more about Relay see https://github.com/aogriffiths/relay.
+Publish and subscribe to anything.
+
+Specifrication
+==============
