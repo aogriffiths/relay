@@ -3,11 +3,16 @@ Relay
 
 _Publish and subscribe to anything._
 
+    ------->
+    P      S 
+    <-------  
 
-See:
+See Also
+========
 
-The Spec
+To find out more see the following branches:
 
-Node.js Implementation
+[The Spec](spec-master) 
+[Java Implementation](java-master) 
+[Node.js Implementation](nodejs-master) 
 
-Java Implementation
