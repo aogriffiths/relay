@@ -1,7 +1,7 @@
 Relay
 =====
 
-Publish and subscribe to anything.
+_Publish and subscribe to anything._
 
 
 See:
