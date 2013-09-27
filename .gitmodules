@@ -1,0 +1,9 @@
+[submodule "spec"]
+	path = spec
+	url = git@github.com:aogriffiths/relay.git
+[submodule "nodejs"]
+	path = nodejs
+	url = git@github.com:aogriffiths/relay.git
+[submodule "java"]
+	path = java
+	url = git@github.com:aogriffiths/relay.git
