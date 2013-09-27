@@ -12,7 +12,7 @@ See Also
 
 To find out more see the following branches:
 
-[The Spec](spec-master) 
-[Java Implementation](java-master) 
-[Node.js Implementation](nodejs-master) 
+[The Spec](/aogriffiths/relay/tree/spec-master) 
+[Java Implementation](/aogriffiths/relay/tree/java-master) 
+[Node.js Implementation](/aogriffiths/relay/tree/nodejs-master) 
 
