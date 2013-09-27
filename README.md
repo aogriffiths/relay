@@ -1,5 +1,15 @@
-Realy for Node.js
-=================
+Relay
+=====
+
+_Publish and subscribe to anything._
+
+
+Relay for Java
+==============
+
+This is the node.js implementation of Relay.
+
+
 
 This is a Relay server implenntation for Node.js. For more about Relay see https://github.com/aogriffiths/relay.
 
