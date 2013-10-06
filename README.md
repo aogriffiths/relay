@@ -130,12 +130,12 @@ subscription.
 ![Relay_Discovery](Relay_Discovery.png)
 
 
-![Req](Relay_req.png) Subsriber makes a GET or HEAD request for a topic.
+![Req](Relay_req.png) Subsriber makes a GET or HEAD request to Publicher for a topic.
     
     HEAD <topic_url> HTTP/1.1
     Host: <hostname.com>
 
-![Res](Relay_res.png) Publisher responds with the latest version of the topic and suitable headers
+![Res](Relay_res.png) Publisher responds to Subscriber with the latest version of the topic and suitable headers
 
     HTTP/1.1 200 OK
     Content-Type: text/xml; charset=utf-8
@@ -176,36 +176,88 @@ a number of `lease_seconds` and MUST resubscribe before these have elapsed.
 
 ### 5.1. Subscription Request
 
-(Identical to the PuSH specification.)
-
 _The Subscriber sends a Subscription Request to a Publisher_
+
+(Identical to the PuSH specification.)
 
 ![Relay_Subscribe](Relay_Subscribe.png)
 
-
-![Req](Relay_req.png) Subscriber Request:
+![Req](Relay_req.png) Subsriber makes a POST request to the Publisher's hub URL.
 
     POST <subscriber_callback_url> HTTP/1.1
     Content-Type: application/x-www-form-urlencoded
-    Content-Type: <topic_content_type>
-    Link: <hub_url>; rel=hub, <topic_url>; rel=self
 
-![Res](Relay_res.png) Publisher Response (sucess):
+    hub.callback=http%3A%2F%2Fcallback&hub.mode=subscribe&hub.topic=http%3A%2F%2Ftopic&hub.lease_seconds=604800&hub.secret=abc123
 
-    HTTP/1.1 200 OK
+![Res](Relay_res.png) Publisher response (success):
+
+    HTTP/1.1 202 Accepted
+
+![Res](Relay_res.png) Publisher response (failiure):
+
+    HTTP/1.1 400 Bad Request
+
+This is an example and error codes could be any 4xx or 5xx.
+
+
 
 
 ### 5.2. Subscription Validation 
+
 _The Publisher validiates the Subscription Request_
 
 (Meets the PuSH Specification)
 
 ![Relay_Validate](Relay_Validate.png)
 
+If validation fails the hub MUST inform the subscriber that the subscription has been denined. See section 5.4.
+
+
+
 
 ### 5.3. Verification of Subscriber Itent
+
 _The Publisher verifies the intent of the Subscriber_
+
+(Meets the PuSH Specification)
+
 ![Relay_Verify](Relay_Verify.png)
+
+![Req](Relay_req.png) Hub makes a GET request to the Subscribers's callback URL.
+
+    GET <subscriber_callback_url>?hub.mode=subscribe&hub.topic=<topic_url>&hub.challenge=<challenge_string>&hub.lease_seconds=604800 HTTP/1.1
+
+![Res](Relay_res.png) Subscriber response (success):
+
+    HTTP/1.1 200 OK
+
+    <challenge_string>
+
+![Res](Relay_res.png) Subscriber response (failiure):
+
+    HTTP/1.1 404 Not Found
+
+
+
+
+### 5.4. Subscription Denied
+
+_Hub informs the Subscriber when a subscription is denied_
+
+(Meets the PuSH Specification, see PuSH section 5.2)
+
+![Relay_Verify](Relay_Verify.png)
+
+![Req](Relay_req.png) Hub makes a GET request to the Subscribers's callback URL.
+
+    GET <subscriber_callback_url>?hub.mode=denied&hub.topic=<topic_url>&hub.reason=<reason> HTTP/1.1
+
+![Res](Relay_res.png) Subscriber response:
+
+    HTTP/1.1 200 OK
+
+The specification does not specify what the subscriber response should be. It SHOULD be assumed the Subscriber can return any response and the Publisher will ignore it.
+
 
 
 6. Publishing
