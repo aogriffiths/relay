@@ -124,11 +124,16 @@ subscription.
 
         * Realy also supports chaining, such that one Realy Publisher can publish to a chain or network of Realy Hubs which can eventaully pubish to a Realy Subscriber.
 
+
+
+
+
+
 4. Discovery
 ------------
 
 #### PuSH 
-> 4. Discovery
+> 4\. Discovery
 
 > A potential subscriber initiates discovery by retrieving (GET or HEAD
 > request) the topic to which it wants to subscribe. The HTTP [RFC2616]
@@ -187,12 +192,15 @@ subscription.
 
 
 
+
+
+
 5. Subscribing and Unsubscribing
 --------------------------------
 
 #### PuSH 
 
-> 5. Subscribing and Unsubscribing
+> 5\. Subscribing and Unsubscribing
 
 > Subscribing to a topic URL consists of four parts that may occur immediately 
 > in sequence or have a delay.
@@ -212,18 +220,22 @@ subscription.
 1. Adhere completely to the PuSH specification.
 
 2. Relay refers to the parts that are involved in Subscribing and Unsubscribing as follows:
-
   * __Subscription Request__ - The Subscriber sends a Subscription Request to a Publisher (5.1) 
   * __Subscription Validation__ - The Publisher validiates the Subscription Request (5.2) 
   * __Verification of Subscriber Itent__ - The Publisher verifies the intent of the Subscriber (5.3) 
   * __Subscription Confirmation__ - The Subscriber ...
 
 3. After a succesful Subscription Relay opperates in a similar way to PuSH with:
-
   * __ Publishing and Content Distribution__ - The Publisher sends all updates to the topic to the Subscriber (6 and 7) 
 
-4. Each step request the previous step is succesful and in this process the Subscriber is given 
-a number of `lease_seconds` and MUST resubscribe before these have elapsed.
+4. Each step request the previous step is succesful and in this process the
+   Subscriber is given  a number of `lease_seconds` and MUST resubscribe before
+   these have elapsed.
+
+
+
+
+
 
 
 ### 5.1. Subscription Request
@@ -232,7 +244,7 @@ _The Subscriber sends a Subscription Request to a Publisher_
 
 #### PuSH
 
-> 5.1.  Subscriber Sends Subscription Request
+> 5.1\.  Subscriber Sends Subscription Request
 
 > Subscription is initiated by the subscriber making an HTTPS [RFC2616] or
 > HTTP [RFC2616] POST request to the hub URL. This request has a Content-Type
