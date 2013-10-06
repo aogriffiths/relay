@@ -175,6 +175,7 @@ a number of `lease_seconds` and MUST resubscribe before these have elapsed.
 
 
 ### 5.1. Subscription Request
+(Identical to the PuSH specification.)
 _The Subscriber sends a Subscription Request to a Publisher_
 ![Relay_Subscribe](Relay_Subscribe.png)
 
@@ -192,15 +193,18 @@ Publisher Response (sucess):
 
 ### 5.2. Subscription Validation 
 _The Publisher validiates the Subscription Request_
+![Relay_Validate](Relay_Validate.png)
 
 
 ### 5.3. Verification of Subscriber Itent
 _The Publisher verifies the intent of the Subscriber_
+![Relay_Verify](Relay_Verify.png)
 
 
 6. Publishing
 -------------
 (Extends the PuSH specification.)
+![Relay_Publish](Relay_Publish.png)
 
 PuSH leaves it open as to how a Publisher sends content to a Hub. With Relay Publishers and Hubs both send tehir content to their Subscribers in an identical way - see Content Distribution.
 
@@ -208,7 +212,7 @@ PuSH leaves it open as to how a Publisher sends content to a Hub. With Relay Pub
 7. Content Distribution
 -----------------------
 (Identical to the PuSH specification.)
-
+![Relay_Distribute](Relay_Distribute.png)
 
 Publisher Request:
 
