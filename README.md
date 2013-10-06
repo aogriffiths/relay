@@ -34,14 +34,14 @@ this mean? A picture is worth a thousand words:
 ![Relay_PuSH](Relay_PuSH.png)
 
 
-In PuSH parlance Relay requires all Publishers are thier own Hubs. It  alows
-Publishers and Hubs to push feeds to Subscribers and other Hubs. This means an
-architecture almost idential to PuSH can be acived but Realy gives to
-advantages.
+In PuSH parlance Relay requires all Publishers are thier own Hubs. It alows
+Publishers and Hubs to push feeds to Subscribers and other Hubs in exactly the
+same way. This means Realy is as capable as, and compatible with PuSH, but
+brings some additional benefits too, like:
 
-1. A chain of Hubs can be created. 
-2. Publishers push to Hubs using exactly the same protocol as Hubs push to 
-   Subscribers.
+* Publishers push to Hubs using exactly the same protocol as Hubs push to 
+  Subscribers.
+* A chain of Hubs can be created. 
 
 There are also lots of other goodies in the Realy spec, so read on...
 
@@ -126,9 +126,51 @@ subscription.
 
 4. Discovery
 ------------
-(Identical to the PuSH specification.)
-![Relay_Discovery](Relay_Discovery.png)
 
+> #### PuSH Discovery (Section 4)
+
+> A potential subscriber initiates discovery by retrieving (GET or HEAD
+> request) the topic to which it wants to subscribe. The HTTP [RFC2616]
+> response from the publisher MUST include at least one Link Header [RFC5988]
+> with rel=hub (a hub link header) as well as exactly one Link Header
+> [RFC5988] with rel=self (the self link header). The former MUST indicate the
+> exact URL of a PubSubHubbub hub designated by the publisher. If more than
+> one URL is specified, it is expected that the publisher pings each of these
+> URLs, so the subscriber may subscribe to one or more of these. The latter
+> will point to the permanent URL for the resource being polled.
+
+> In the absence of HTTP [RFC2616] Link headers, subscribers MAY fall back to
+> other methods to discover the hub(s) and the canonical URI of the topic. If
+> the topic is an XML based feed, it MAY use embedded link elements as
+> described in Appendix B of Web Linking [RFC5988]. Similarly, for HTML pages,
+> it MAY use embedded link elements as described in Appendix A of Web Linking
+> [RFC5988]. Finally, publishers MAY also use the Well-Known Uniform Resource
+> Identifiers [RFC5785] .host-meta to include the <Linkelement with rel="hub".
+
+
+#### Relay Discovery
+
+1. Adhere completely to the PuSH specification.
+
+2. The the self link header SHOULD be equal to the topic_url (This specification 
+   does not address the scenario if it is not).
+
+3. There MAY be more than one hub link header. If so Subscribers MAY
+   subscriber to one or more Hub. Subscribing to one is RECOMMENDED and
+   Subscribers SHOULD use the first first hub link provided unless
+   there is a logical reason not to. Publishes SHOULD put their prefered hub
+   earlier in the order of hub link headers.
+
+4. It is NOT RECOMENDED that Relay Publishers fall back to other methods methods of
+   discovery mentioned in the PuSH 0.3 and PuSH 0.4 sepcification.
+
+5. Realy Subscribers MAY OPTIONALLY fall back to alternative methods of
+   discovery if they are required to support older PuSH Topics.
+
+
+#### Examples (Non-normative)
+
+![Relay_Discovery](Relay_Discovery.png)
 
 ![Req](Relay_req.png) Subsriber makes a GET or HEAD request to Publicher for a topic.
     
@@ -142,26 +184,28 @@ subscription.
     Content-Length: length
     Link: <hub_link_url>; rel=hub, <self_link_url>; rel=self
 
-1. `<self_link_url>` SHOULD be equal to the `<topic_url>` (This specification 
-   does not address the scenario if it is not).
-
-2. There MAY be more than one `<hub_link_url>`. If so Subscribers MAY
-   subscriber to one or more Hub. Subscribing to one is RECOMMENDED and
-   Subscribers SHOULD use the first first `<hub_link_url>` provided unless
-   there is a logical reason not to. Publishes SHOULD put their prefered hub
-   earlier in the list of hub_link_url's.
-
-3. It is NOT RECOMENDED that Relay Publishers use any alternative methods of
-   discovery mentioned in the PuSH 0.3 and PuSH 0.4 sepcification.
-
-4. Realy Subscribers MAY OPTIONALLY fall back to alternative methods of
-   discovery if they are required to support older PuSH Topics.
 
 
 5. Subscribing and Unsubscribing
 --------------------------------
-(Identical to the PuSH specification.)
 
+> #### PuSH Subscribing and Unsubscribing (Section 5)
+
+> Subscribing to a topic URL consists of four parts that may occur immediately 
+> in sequence or have a delay.
+
+> * Requesting a subscription using the hub
+> * Validating the subscription with the publisher (OPTIONAL)
+> * Confirming the subscription was actually desired by the subscriber
+> * Periodically reconfirming the subscription is still active (OPTIONAL)
+
+> Unsubscribing works in the same way, except with a single parameter changed 
+> to indicate the desire to unsubscribe. Also, the Hub will not validate 
+> unsubscription requests with the publisher.
+
+#### Relay Subscribing and Unsubscribing 
+
+1. Adhere completely to the PuSH specification.
 
 Follows the PuSH specification but adds some extentions. The steps are:
 
