@@ -130,12 +130,12 @@ subscription.
 ![Relay_Discovery](Relay_Discovery.png)
 
 
-Subsriber makes a GET or HEAD request to a topic.
+![Req](Relay_req.png) Subsriber makes a GET or HEAD request for a topic.
     
     HEAD <topic_url> HTTP/1.1
     Host: <hostname.com>
 
-Publisher responds with the latest version of the topic and suitable headers
+![Res](Relay_res.png) Publisher responds with the latest version of the topic and suitable headers
 
     HTTP/1.1 200 OK
     Content-Type: text/xml; charset=utf-8
@@ -175,24 +175,31 @@ a number of `lease_seconds` and MUST resubscribe before these have elapsed.
 
 
 ### 5.1. Subscription Request
+
 (Identical to the PuSH specification.)
+
 _The Subscriber sends a Subscription Request to a Publisher_
+
 ![Relay_Subscribe](Relay_Subscribe.png)
 
-Subscriber Request:
+
+![Req](Relay_req.png) Subscriber Request:
 
     POST <subscriber_callback_url> HTTP/1.1
     Content-Type: application/x-www-form-urlencoded
     Content-Type: <topic_content_type>
     Link: <hub_url>; rel=hub, <topic_url>; rel=self
 
-Publisher Response (sucess):
+![Res](Relay_res.png) Publisher Response (sucess):
 
     HTTP/1.1 200 OK
 
 
 ### 5.2. Subscription Validation 
 _The Publisher validiates the Subscription Request_
+
+(Meets the PuSH Specification)
+
 ![Relay_Validate](Relay_Validate.png)
 
 
@@ -203,7 +210,10 @@ _The Publisher verifies the intent of the Subscriber_
 
 6. Publishing
 -------------
-(Extends the PuSH specification.)
+_The Publisher sends updates to it's Hubs and any other Subscribers_
+
+(Meets and Extends the PuSH specification.)
+
 ![Relay_Publish](Relay_Publish.png)
 
 PuSH leaves it open as to how a Publisher sends content to a Hub. With Relay Publishers and Hubs both send tehir content to their Subscribers in an identical way - see Content Distribution.
@@ -211,7 +221,10 @@ PuSH leaves it open as to how a Publisher sends content to a Hub. With Relay Pub
 
 7. Content Distribution
 -----------------------
-(Identical to the PuSH specification.)
+_Hub sends updates to Subscribers and any other Hubs_
+
+(Meets and Extends the PuSH specification.)
+
 ![Relay_Distribute](Relay_Distribute.png)
 
 Publisher Request:
