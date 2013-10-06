@@ -127,7 +127,8 @@ subscription.
 4. Discovery
 ------------
 
-> #### PuSH Discovery (Section 4)
+#### PuSH 
+> 4. Discovery
 
 > A potential subscriber initiates discovery by retrieving (GET or HEAD
 > request) the topic to which it wants to subscribe. The HTTP [RFC2616]
@@ -148,7 +149,7 @@ subscription.
 > Identifiers [RFC5785] .host-meta to include the <Linkelement with rel="hub".
 
 
-#### Relay Discovery
+#### Relay 
 
 1. Adhere completely to the PuSH specification.
 
@@ -189,7 +190,9 @@ subscription.
 5. Subscribing and Unsubscribing
 --------------------------------
 
-> #### PuSH Subscribing and Unsubscribing (Section 5)
+#### PuSH 
+
+> 5. Subscribing and Unsubscribing
 
 > Subscribing to a topic URL consists of four parts that may occur immediately 
 > in sequence or have a delay.
@@ -203,24 +206,76 @@ subscription.
 > to indicate the desire to unsubscribe. Also, the Hub will not validate 
 > unsubscription requests with the publisher.
 
-#### Relay Subscribing and Unsubscribing 
+
+#### Relay 
 
 1. Adhere completely to the PuSH specification.
 
-Follows the PuSH specification but adds some extentions. The steps are:
+2. Relay refers to the parts that are involved in Subscribing and Unsubscribing as follows:
 
-1. __(5.1) Subscription Request__ - The Subscriber sends a Subscription Request to a Publisher
-2. __(5.2) Subscription Validation__ - The Publisher validiates the Subscription Request
-3. __(5.3) Verification of Subscriber Itent__ - The Publisher verifies the intent of the Subscriber
-4. __(6 and 7) Publishing and Content Distribution__ - The Publisher sends all updates to the topic to the Subscriber
+  * __Subscription Request__ - The Subscriber sends a Subscription Request to a Publisher (5.1) 
+  * __Subscription Validation__ - The Publisher validiates the Subscription Request (5.2) 
+  * __Verification of Subscriber Itent__ - The Publisher verifies the intent of the Subscriber (5.3) 
+  * __Subscription Confirmation__ - The Subscriber ...
 
-Each step request the previous step is succesful and in this process the Subscriber is given 
+3. After a succesful Subscription Relay opperates in a similar way to PuSH with:
+
+  * __ Publishing and Content Distribution__ - The Publisher sends all updates to the topic to the Subscriber (6 and 7) 
+
+4. Each step request the previous step is succesful and in this process the Subscriber is given 
 a number of `lease_seconds` and MUST resubscribe before these have elapsed.
 
 
 ### 5.1. Subscription Request
 
 _The Subscriber sends a Subscription Request to a Publisher_
+
+#### PuSH
+
+> 5.1.  Subscriber Sends Subscription Request
+
+> Subscription is initiated by the subscriber making an HTTPS [RFC2616] or
+> HTTP [RFC2616] POST request to the hub URL. This request has a Content-Type
+> of application/x-www-form-urlencoded (described in Section 17.13.4 of
+> [W3C.REC‑html401‑19991224]) and the following parameters in its body:
+
+> * __hub.callback__ REQUIRED. The subscriber's callback URL where
+>   notifications should be delivered. It is considered good practice to use a
+>   unique callback URL for each subscription.
+> * __hub.mode__ REQUIRED. The literal string "subscribe" or "unsubscribe",
+>   depending on the goal of the request.
+> * __hub.topic__ REQUIRED. The topic URL that the subscriber wishes to
+>   subscribe to or unsubscribe from.
+> * __hub.lease_seconds__ OPTIONAL. Number of seconds for which the subscriber
+>   would like to have the subscription active. Hubs MAY choose to respect
+>   this value or not, depending on their own policies. This parameter MAY be
+>   present for unsubscription requests and MUST be ignored by the hub in that
+>   case.
+> * __hub.secret__ OPTIONAL. A subscriber-provided secret string that will be
+>   used to compute an HMAC digest for authorized content distribution. If not
+>   supplied, the HMAC digest will not be present for content distribution
+>   requests. This parameter SHOULD only be specified when the request was
+>   made over HTTPS [RFC2818]. This parameter MUST be less than 200 bytes in
+>   length.
+
+> Subscribers MAY also include additional HTTP [RFC2616] request parameters, as
+> well as HTTP [RFC2616] Headers if they are required by the hub. In the
+> context of social web applications, it is considered good practice to include
+> a From HTTP [RFC2616] header (as described in section 14.22 of Hypertext
+> Transfer Protocol [RFC2616]) to indicate on behalf of which user the
+> subscription is being performed.
+
+> Hubs MUST ignore additional request parameters they do not understand.
+
+> Hubs MUST allow subscribers to re-request subscriptions that are already
+> activated. Each subsequent request to a hub to subscribe or unsubscribe MUST
+> override the previous subscription state for a specific topic URL and
+> callback URL combination once the action is verified. Any failures to
+> confirm the subscription action MUST leave the subscription state unchanged.
+> This is required so subscribers can renew their subscriptions before the
+> lease seconds period is over without any interruption.
+
+#### Relay
 
 (Identical to the PuSH specification.)
 
