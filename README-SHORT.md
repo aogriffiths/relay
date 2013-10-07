@@ -16,6 +16,11 @@ Status: DRAFT
 
 Author(s): Adam Griffiths
 
+Long Version: [https://github.com/aogriffiths/relay/blob/spec-master/README.md]
+
+Short Version: [https://github.com/aogriffiths/relay/blob/spec-master/README-SHORT.md]
+
+(The long versions includes examples and useful extracts from the PubSubHubbub specification. The short version ommits these.)
 
 <br/>
 <br/>
