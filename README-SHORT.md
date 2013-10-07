@@ -12,10 +12,12 @@ _Publish. Subscribe. Syndicate._
 Specification
 =============
 
-* __Status:__ DRAFT
-* __Author(s):__ Adam Griffiths
-* __Long Version:__ [https://github.com/aogriffiths/relay/blob/spec-master/README.md]
-* __Short Version:__ [https://github.com/aogriffiths/relay/blob/spec-master/README-SHORT.md]
+*  __Status:__ DRAFT
+*  __Latest Editor's Drafts:__
+    *  __Long Version:__ [https://github.com/aogriffiths/relay/blob/spec-master/README.md]
+    *  __Short Version:__ [https://github.com/aogriffiths/relay/blob/spec-master/README-SHORT.md]
+*  __Editor(s):__ 
+    *  Adam Griffiths
 
 (The long versions includes examples and useful extracts from the PubSubHubbub specification. The short version ommits these.)
 
@@ -65,8 +67,6 @@ interpreted as described in [RFC2119](http://www.ietf.org/rfc/rfc2119.txt).
 ************************************************************************************************************************
 2. Definitions
 ------------------------------------------------------------------------------------------------------------------------
-
-If you are familiure with PuSH you should find the following definaitions similar. 
 
 ### Specific Definations
 
@@ -263,28 +263,10 @@ _Hub informs the Subscriber when a subscription is denied_
 ------------------------------------------------------------------------------------------------------------------------
 _The Publisher sends updates to it's Hubs and any other Subscribers_
 
-#### PuSH Specification
-
-![66](66.png)
-> 6\.  Publishing
->
-> The publisher MUST inform the hubs it previously designated when a topic has
-> been updated. The hub and the publisher can agree on any mechanism, as long
-> as the hub is eventually able send the updated payload to the subscribers.
-
-![99](99.png)
-
-#### Relay Specification
 
 (Meets and Extends the PuSH specification.)
 (_Compatible with the PusH spec part 3, 1st bullet.
 Different to part 3, 3rd bullet, but that's fine as per part 6_)
-
-![Relay_Publish](Relay_Publish.png)
-
-PuSH leaves it open as to how a Publisher sends content to a Hub. With Relay
-Publishers and Hubs both send tehir content to their Subscribers in an
-identical way - see Content Distribution.
 
 
 

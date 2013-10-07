@@ -12,10 +12,12 @@ _Publish. Subscribe. Syndicate._
 Specification
 =============
 
-* __Status:__ DRAFT
-* __Author(s):__ Adam Griffiths
-* __Long Version:__ [https://github.com/aogriffiths/relay/blob/spec-master/README.md]
-* __Short Version:__ [https://github.com/aogriffiths/relay/blob/spec-master/README-SHORT.md]
+*  __Status:__ DRAFT
+*  __Latest Editor's Drafts:__
+    *  __Long Version:__ [https://github.com/aogriffiths/relay/blob/spec-master/README.md]
+    *  __Short Version:__ [https://github.com/aogriffiths/relay/blob/spec-master/README-SHORT.md]
+*  __Editor(s):__ 
+    *  Adam Griffiths
 
 (The long versions includes examples and useful extracts from the PubSubHubbub specification. The short version ommits these.)
 
@@ -70,8 +72,6 @@ interpreted as described in [RFC2119](http://www.ietf.org/rfc/rfc2119.txt).
 ************************************************************************************************************************
 2. Definitions
 ------------------------------------------------------------------------------------------------------------------------
-
-If you are familiure with PuSH you should find the following definaitions similar. 
 
 ### Specific Definations
 
@@ -587,6 +587,7 @@ will ignore it.
 ------------------------------------------------------------------------------------------------------------------------
 _The Publisher sends updates to it's Hubs and any other Subscribers_
 
+<!-- Long Spec START -->
 #### PuSH Specification
 
 ![66](66.png)
@@ -599,17 +600,19 @@ _The Publisher sends updates to it's Hubs and any other Subscribers_
 ![99](99.png)
 
 #### Relay Specification
+<!-- Long Spec END -->
 
 (Meets and Extends the PuSH specification.)
 (_Compatible with the PusH spec part 3, 1st bullet.
 Different to part 3, 3rd bullet, but that's fine as per part 6_)
 
+<!-- Long Spec START -->
 ![Relay_Publish](Relay_Publish.png)
 
 PuSH leaves it open as to how a Publisher sends content to a Hub. With Relay
 Publishers and Hubs both send tehir content to their Subscribers in an
 identical way - see Content Distribution.
-
+<!-- Long Spec END -->
 
 
 <br/><br/><a name="7."></a>
