@@ -12,17 +12,13 @@ _Publish. Subscribe. Syndicate._
 Specification
 =============
 
-Status: DRAFT
-
-Author(s): Adam Griffiths
-
-Long Version: [https://github.com/aogriffiths/relay/blob/spec-master/README.md]
-
-Short Version: [https://github.com/aogriffiths/relay/blob/spec-master/README-SHORT.md]
+* __Status:__ DRAFT
+* __Author(s):__ Adam Griffiths
+* __Long Version:__ [https://github.com/aogriffiths/relay/blob/spec-master/README.md]
+* __Short Version:__ [https://github.com/aogriffiths/relay/blob/spec-master/README-SHORT.md]
 
 (The long versions includes examples and useful extracts from the PubSubHubbub specification. The short version ommits these.)
 
-<br/>
 <br/>
 ************************************************************************************************************************
 Abstract
@@ -34,33 +30,29 @@ subscribing to feeds.
 
 
 <br/>
-<br/>
 ************************************************************************************************************************
 Introduction
 ------------------------------------------------------------------------------------------------------------------------
 
-
 Relay is inspired by and compatible with PubSubHubbub (PuSH) but has some
 additional features that you might find useful. Realy considers any server to
-be capable of being a Publisher, a Subscriber, a Hub or all three. What does
-this mean? A picture is worth a thousand words:
+be capable of being a Publisher, a Subscriber, a Hub or all three. 
+
+<!-- Long Spec START -->
+What does this mean? A picture is worth a thousand words:
 
 ![Relay_PuSH](Relay_PuSH.png)
+<!-- Long Spec END -->
 
-
-In PuSH parlance Relay requires all Publishers are thier own Hubs. It alows
+In PuSH parlance Relay requires all Publishers to be thier own Hubs. It alows
 Publishers and Hubs to push feeds to Subscribers or other Hubs in exactly the
 same way. This means Realy is as capable as, and compatible with PuSH, but
-brings some additional benefits too, like:
+brings some additional benefits, like:
 
 * Publishers push to Hubs using exactly the same protocol as Hubs push to 
   Subscribers.
 * A chain of Hubs can be created. 
 
-There are also lots of other goodies in the Realy spec, so read on...
-
-
-<br/>
 <br/>
 <a name="1."></a>
 ************************************************************************************************************************
@@ -74,7 +66,6 @@ interpreted as described in [RFC2119](http://www.ietf.org/rfc/rfc2119.txt).
 
 
 <br/>
-<br/>
 <a name="2."></a>
 ************************************************************************************************************************
 2. Definitions
@@ -84,49 +75,38 @@ If you are familiure with PuSH you should find the following definaitions simila
 
 ### Specific Definations
 
-__PuSH:__ When the word "push" is capitalised as "PuSH" it refers to
-PubSubHubbub, and unless otherwise specifided, version 0.4.
-
-__Topic/Feed: __ The words "feed" and "topic" are used intechangably. A Topic
-is the unit to which one can subscribe to. It is a collection of entries.
-
-__Entry/Item:__ A topic is a collection of entries (Synonymous with a feed
-being a collection of items).
-
-__Publisher:__ (_noun_). An entity that sends notifications of Changes to a
-Topic.
-
-__Originating Publisher:__ (_noun_). The Publisher entity that owns a Topic.
-They are the originating source and the only system that authors changes to
-the topic.
-
-__To publish:__ (_verb_). The process of notfying subscribers of changes to a
-Topic. The originating Publisher MUST _publish_ the Topic using the Relay
-specification. Other systems MAY also re-_publish_ the Topic, in which case
-they are acting as a Hub.
-
-__Subscriber:__ (_noun_). An entity that receives notifications of changes to
-a Topic.
-
-__To subscribe:__ (_verb_). The process of requesing a Publisher publishes to
-a Subsciber on an on going basis. Usuaully initiated by the subscriber.
-
-__Hub:__ An entity that both subscribers to a Topic and publishes it. A Hub
-re-publishes a Topic or you could say it relays it.
+* __PuSH:__ When the word "push" is capitalised as "PuSH" it refers to
+  PubSubHubbub, and unless otherwise specifided, version 0.4.
+* __Topic/Feed:__ The words "feed" and "topic" are used intechangably. A Topic
+  is the unit to which one can subscribe to. It is a collection of entries.
+* __Entry/Item:__ A topic is a collection of entries (Synonymous with a feed
+  being a collection of items).
+* __Publisher:__ (_noun_). An entity that sends notifications of Changes to a
+  Topic.
+* __Originating Publisher:__ (_noun_). The Publisher entity that owns a Topic.
+  They are the originating source and the only system that authors changes to
+  the topic.
+* __To publish:__ (_verb_). The process of notfying subscribers of changes to a
+  Topic. The originating Publisher MUST _publish_ the Topic using the Relay
+  specification. Other systems MAY also re-_publish_ the Topic, in which case
+  they are acting as a Hub.
+* __Subscriber:__ (_noun_). An entity that receives notifications of changes to
+  a Topic.
+* __To subscribe:__ (_verb_). The process of requesing a Publisher publishes to
+  a Subsciber on an on going basis. Usuaully initiated by the subscriber.
+* __Hub:__ An entity that both subscribers to a Topic and publishes it. A Hub
+  re-publishes a Topic or you could say it relays it.
 
 ### General Concepts
 
-All Relay Publishers are thier own Hubs. 
-
-A Publisher follows the same approach to _publishing_ content as a Hub
+* All Relay Publishers are thier own Hubs. 
+* A Publisher follows the same approach to _publishing_ content as a Hub
 follows for _distributing_ it. (PuSH uses "Publishing" and "distributing" to
 refer to slightly different things but Realy seeks to make them the same
 thing).
+* Hubs subscribe to Publishers or other Hubs.
 
-Hubs subscribe to Publishers or other Hubs.
 
-
-<br/>
 <br/>
 <a name="3."></a>
 ************************************************************************************************************************
@@ -176,7 +156,6 @@ specification.
 
 
 
-<br/>
 <br/>
 <a name="4.">
 ************************************************************************************************************************
@@ -251,7 +230,6 @@ topic and suitable headers
 
 
 <br/>
-<br/>
 <a name="5."></a>
 ************************************************************************************************************************
 5. Subscribing and Unsubscribing
@@ -300,7 +278,6 @@ spec, see below.)
 
 
 
-<br/>
 <br/>
 <a name="5.1."></a>
 ************************************************************************************************************************
@@ -422,7 +399,6 @@ This is an example and error codes could be any 4xx or 5xx.
 <!-- Long Spec END -->
 
 <br/>
-<br/>
 <a name="5.2."></a>
 ************************************************************************************************************************
 ### 5.2. Subscription Validation 
@@ -483,7 +459,6 @@ has been denined. See section 5.4.
 <!-- Long Spec END -->
 
 
-<br/>
 <br/>
 <a name="5.3."></a>
 ************************************************************************************************************************
@@ -566,14 +541,12 @@ _The Publisher verifies the intent of the Subscriber_
 <!-- Long Spec END -->
 
 <br/>
-<br/>
 <a name="5.4."></a>
 ************************************************************************************************************************
 ### 5.4. Subscription Renewal
 
 
 
-<br/>
 <br/>
 <a name="5.5."></a>
 ************************************************************************************************************************
@@ -607,7 +580,6 @@ will ignore it.
 
 <!-- Long Spec END -->
 
-<br/>
 <br/>
 <a name="6."></a>
 ************************************************************************************************************************
@@ -740,7 +712,6 @@ Subscriber Response (sucess):
 TODO
 
 
-<br/>
 <br/>
 <a name="9."></a>
 ************************************************************************************************************************
