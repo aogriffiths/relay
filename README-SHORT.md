@@ -178,34 +178,6 @@ specification.
 4. Discovery
 ------------------------------------------------------------------------------------------------------------------------
 
-<!-- Long Spec START -->
-#### PuSH Specification
-
-![66](66.png)
-> 4\. Discovery
-
-> A potential subscriber initiates discovery by retrieving (GET or HEAD
-> request) the topic to which it wants to subscribe. The HTTP [RFC2616]
-> response from the publisher MUST include at least one Link Header [RFC5988]
-> with rel=hub (a hub link header) as well as exactly one Link Header
-> [RFC5988] with rel=self (the self link header). The former MUST indicate the
-> exact URL of a PubSubHubbub hub designated by the publisher. If more than
-> one URL is specified, it is expected that the publisher pings each of these
-> URLs, so the subscriber may subscribe to one or more of these. The latter
-> will point to the permanent URL for the resource being polled.
-
-> In the absence of HTTP [RFC2616] Link headers, subscribers MAY fall back to
-> other methods to discover the hub(s) and the canonical URI of the topic. If
-> the topic is an XML based feed, it MAY use embedded link elements as
-> described in Appendix B of Web Linking [RFC5988]. Similarly, for HTML pages,
-> it MAY use embedded link elements as described in Appendix A of Web Linking
-> [RFC5988]. Finally, publishers MAY also use the Well-Known Uniform Resource
-> Identifiers [RFC5785] .host-meta to include the <Linkelement with rel="hub".
-
-![99](99.png)
-
-#### Relay Specification
-<!-- Long Spec END -->
 
 1. Adhere to the PuSH specification.
 
@@ -224,25 +196,6 @@ specification.
 5. Realy Subscribers MAY OPTIONALLY fall back to alternative methods of
    discovery if they need to support PuSH Topics that use these.
 
-<!-- Long Spec START -->
-#### Examples (Non-normative)
-
-![Relay_Discovery](Relay_Discovery.png)
-
-![Req](Relay_req.png) Subsriber makes a GET or HEAD request to Publisher for a topic.
-    
-    HEAD <topic_url> HTTP/1.1
-    Host: <hostname.com>
-
-![Res](Relay_res.png) Publisher responds to Subscriber with the latest version of the 
-topic and suitable headers
-
-    HTTP/1.1 200 OK
-    Content-Type: text/xml; charset=utf-8
-    Content-Length: length
-    Link: <hub_link_url>; rel=hub, <self_link_url>; rel=self
-
-<!-- Long Spec END -->
 
 
 <br/>
@@ -251,28 +204,6 @@ topic and suitable headers
 ************************************************************************************************************************
 5. Subscribing and Unsubscribing
 ------------------------------------------------------------------------------------------------------------------------
-<!-- Long Spec START -->
-#### PuSH Specification
-
-![66](66.png)
-> 5\. Subscribing and Unsubscribing
-
-> Subscribing to a topic URL consists of four parts that may occur immediately 
-> in sequence or have a delay.
-
-> * Requesting a subscription using the hub
-> * Validating the subscription with the publisher (OPTIONAL)
-> * Confirming the subscription was actually desired by the subscriber
-> * Periodically reconfirming the subscription is still active (OPTIONAL)
-
-> Unsubscribing works in the same way, except with a single parameter changed 
-> to indicate the desire to unsubscribe. Also, the Hub will not validate 
-> unsubscription requests with the publisher.
-
-![99](99.png)
-
-#### Relay Specification
-<!-- Long Spec END -->
 
 1. Adhere to the PuSH specification.
 
@@ -303,118 +234,9 @@ spec, see below.)
 
 _The Subscriber sends a Subscription Request to a Publisher_
 
-<!-- Long Spec START -->
-#### PuSH Specification
-
-![66](66.png)
-> 5\.1\.  Subscriber Sends Subscription Request
->
-> Subscription is initiated by the subscriber making an HTTPS [RFC2616] or
-> HTTP [RFC2616] POST request to the hub URL. This request has a Content-Type
-> of application/x-www-form-urlencoded (described in Section 17.13.4 of
-> [W3C.REC‑html401‑19991224]) and the following parameters in its body:
->
-> * __hub.callback__ REQUIRED. The subscriber's callback URL where
->   notifications should be delivered. It is considered good practice to use a
->   unique callback URL for each subscription.
-> * __hub.mode__ REQUIRED. The literal string "subscribe" or "unsubscribe",
->   depending on the goal of the request.
-> * __hub.topic__ REQUIRED. The topic URL that the subscriber wishes to
->   subscribe to or unsubscribe from.
-> * __hub.lease_seconds__ OPTIONAL. Number of seconds for which the subscriber
->   would like to have the subscription active. Hubs MAY choose to respect
->   this value or not, depending on their own policies. This parameter MAY be
->   present for unsubscription requests and MUST be ignored by the hub in that
->   case.
-> * __hub.secret__ OPTIONAL. A subscriber-provided secret string that will be
->   used to compute an HMAC digest for authorized content distribution. If not
->   supplied, the HMAC digest will not be present for content distribution
->   requests. This parameter SHOULD only be specified when the request was
->   made over HTTPS [RFC2818]. This parameter MUST be less than 200 bytes in
->   length.
->
-> Subscribers MAY also include additional HTTP [RFC2616] request parameters, as
-> well as HTTP [RFC2616] Headers if they are required by the hub. In the
-> context of social web applications, it is considered good practice to include
-> a From HTTP [RFC2616] header (as described in section 14.22 of Hypertext
-> Transfer Protocol [RFC2616]) to indicate on behalf of which user the
-> subscription is being performed.
-> 
-> Hubs MUST ignore additional request parameters they do not understand.
->
-> Hubs MUST allow subscribers to re-request subscriptions that are already
-> activated. Each subsequent request to a hub to subscribe or unsubscribe MUST
-> override the previous subscription state for a specific topic URL and
-> callback URL combination once the action is verified. Any failures to
-> confirm the subscription action MUST leave the subscription state unchanged.
-> This is required so subscribers can renew their subscriptions before the
-> lease seconds period is over without any interruption.
->
-> 5\.1\.1\.  Subscription Parameter Details
-> 
-> The topic and callback URLs MAY use HTTP [RFC2616] or HTTPS [RFC2818]
-> schemes. The topic URL MUST be the one advertised by the publisher in a Self
-> Link Header during the discovery phase. (See Section 4). Hubs MAY refuse
-> subscriptions if the topic URL does not correspond to the one advertised by
-> the publisher. The topic URL can otherwise be free-form following the URI
-> spec [RFC3986]. Hubs MUST always decode non-reserved characters for these
-> URL parameters; see section 2.4 on "When to Encode or Decode" in the URI
-> spec [RFC3986].
->
-> The callback URL MAY contain arbitrary query string parameters (e.g.,
-> ?foo=bar&red=fish). Hubs MUST preserve the query string during subscription
-> verification by appending new parameters to the end of the list using the &
-> (ampersand) character to join. Existing parameters with names that overlap
-> with those used by verification requests will not be overwritten. For event
-> notification, the callback URL will be POSTed to including any query-string
-> parameters in the URL portion of the request, not as POST body parameters.
->
-> 5\.1\.2\.  Subscription Response Details
->
-> The hub MUST respond to a subscription request with an HTTP [RFC2616] 202
-> "Accepted" response to indicate that the request was received and will now
-> be verified (Section 5.3) and validated (Section 5.2) by the hub. The hub
-> SHOULD perform the verification and validation of intent as soon as
-> possible.
->
-> If a hub finds any errors in the subscription request, an appropriate HTTP
-> [RFC2616] error response code (4xx or 5xx) MUST be returned. In the event of
-> an error, hubs SHOULD return a description of the error in the response body
-> as plain text. Hubs MAY decide to reject some callback URLs or topic URLs
-> based on their own policies (e.g., domain authorization, topic URL port
-> numbers).
-
-![99](99.png)
-
-#### Relay Specification
-<!-- Long Spec END -->
 
 (Identical to the PuSH specification.)
 
-<!-- Long Spec START -->
-#### Examples
-
-![Relay_Subscribe](Relay_Subscribe.png)
-
-![Req](Relay_req.png) Subsriber makes a POST request to the Publisher's hub URL.
-
-    POST <subscriber_callback_url> HTTP/1.1
-    Content-Type: application/x-www-form-urlencoded
-
-    hub.callback=http%3A%2F%2Fcallback&hub.mode=subscribe&hub.topic=
-      http%3A%2F%2Ftopic&hub.lease_seconds=604800&hub.secret=abc123
-
-![Res](Relay_res.png) Publisher response (success):
-
-    HTTP/1.1 202 Accepted
-
-![Res](Relay_res.png) Publisher response (failiure):
-
-    HTTP/1.1 400 Bad Request
-
-This is an example and error codes could be any 4xx or 5xx.
-
-<!-- Long Spec END -->
 
 <br/>
 <br/>
@@ -424,58 +246,9 @@ This is an example and error codes could be any 4xx or 5xx.
 
 _The Publisher validiates the Subscription Request_
 
-<!-- Long Spec START -->
-#### PuSH Specification
-
-![66](66.png) 
-
-> 5\.2\.  Subscription Validation
->
-> Subscriptions MAY be validated by the Hubs who may require more details to
-> accept or refuse a subscription. The Hub MAY also check with the publisher
-> whether the subscription should be accepted.
->
-> If (and when), the subscription is accepted, the hub MUST perform the
-> verification of intent of the subscriber.
->
-> If (and when), the subscription is denied, the hub MUST inform the
-> subscriber by sending an HTTP [RFC2616] GET request to the subscriber's
-> callback URL as given in the subscription request. This request has the
-> following query string arguments appended (format described in Section
-> 17.13.4 of [W3C.REC‑html401‑19991224]):
->
-> * __hub.mode__ REQUIRED. The literal string "denied".
-> * __hub.topic__ REQUIRED. The topic URL given in the corresponding 
->   subscription request.
-> * __hub.reason__ OPTIONAL. The hub may include a reason for which the 
->   subscription has been denied.
->
-> Hubs may provide an additional HTTP [RFC2616] Location header (as described
-> in section 14.30 of Hypertext Transfer Protocol [RFC2616]) to indicate that
-> the subscriber may retry subscribing to a different hub.topic. This allows
-> for limited distribution to specific groups or users in the context of
-> social web applications.
->
-> The subscription MAY be denied by the hub at any point (even if it was
-> previously accepted). The Subscriber SHOULD then consider that the
-> subscription is not possible anymore.
-
-![99](99.png)
-
-#### Relay Specification
-<!-- Long Spec END -->
 
 (Meets the PuSH Specification)
 
-<!-- Long Spec START -->
-#### Examples
-
-![Relay_Validate](Relay_Validate.png)
-
-If validation fails the hub MUST inform the subscriber that the subscription
-has been denined. See section 5.4.
-
-<!-- Long Spec END -->
 
 
 <br/>
@@ -486,79 +259,9 @@ has been denined. See section 5.4.
 
 _The Publisher verifies the intent of the Subscriber_
 
-<!-- Long Spec START -->
-#### PuSH Specification
-
-![66](66.png)
-> 5\.3\.  Hub Verifies Intent of the Subscriber
->
-> In order to prevent an attacker from creating unwanted subscriptions on
-> behalf of a subscriber (or unsubscribing desired ones), a hub must ensure
-> that the subscriber did indeed send the subscription request.
->
-> The hub verifies a subscription request by sending an HTTP [RFC2616] GET
-> request to the subscriber's callback URL as given in the subscription
-> request. This request has the following query string arguments appended
-> (format described in Section 17.13.4 of [W3C.REC‑html401‑19991224]):
->
-> * __hub.mode__ REQUIRED. The literal string "subscribe" or "unsubscribe",
->   which matches the original request to the hub from the subscriber.
-> * __hub.topic__ REQUIRED. The topic URL given in the corresponding subscription
->   request.
-> * __hub.challenge__ REQUIRED. A hub-generated, random string that MUST be echoed
->   by the subscriber to verify the subscription.
-> * __hub.lease_seconds__ REQUIRED/OPTIONAL. The hub-determined number of seconds
->   that the subscription will stay active before expiring, measured from the
->   time the verification request was made from the hub to the subscriber. Hubs
->   MUST supply this parameter for subscription requests. This parameter MAY be
->   present for unsubscribe requests and MUST be ignored by subscribers during
->   unsubscription.
->
-> 5\.3\.1\.  Verification Details
->
-> The subscriber MUST confirm that the hub.topic corresponds to a pending
-> subscription or unsubscription that it wishes to carry out. If so, the
-> subscriber MUST respond with an HTTP success (2xx) code with a response body
-> equal to the hub.challenge parameter. If the subscriber does not agree with
-> the action, the subscriber MUST respond with a 404 "Not Found" response.
->
-> The hub MUST consider other server response codes (3xx, 4xx, 5xx) to mean
-> that the verification request has failed. If the subscriber returns an HTTP
-> [RFC2616] success (2xx) but the content body does not match the
-> hub.challenge parameter, the hub MUST also consider verification to have
-> failed.
->
-> Hubs MAY make the hub.lease_seconds equal to the value the subscriber passed
-> in their subscription request but MAY change the value depending on the
-> hub's policies. To sustain a subscription, the subscriber MUST re-request
-> the subscription on the hub before hub.lease_seconds seconds has elapsed.
-
-![99](99.png)
-
-#### Relay Specification
-<!-- Long Spec END -->
 
 (Meets the PuSH Specification)
 
-<!-- Long Spec START -->
-#### Examples
-![Relay_Verify](Relay_Verify.png)
-
-![Req](Relay_req.png) Hub makes a GET request to the Subscribers's callback URL.
-
-    GET <subscriber_callback_url>?hub.mode=subscribe&hub.topic=<topic_url>&hub
-      .challenge=<challenge_string>&hub.lease_seconds=604800 HTTP/1.1
-
-![Res](Relay_res.png) Subscriber response (success):
-
-    HTTP/1.1 200 OK
-
-    <challenge_string>
-
-![Res](Relay_res.png) Subscriber response (failiure):
-
-    HTTP/1.1 404 Not Found
-<!-- Long Spec END -->
 
 <br/>
 <br/>
@@ -576,31 +279,9 @@ _The Publisher verifies the intent of the Subscriber_
 
 _Hub informs the Subscriber when a subscription is denied_
 
-<!-- Long Spec START -->
-#### Relay Specification
-<!-- Long Spec END -->
 
 (Meets the PuSH Specification, see PuSH section 5.2)
 
-<!-- Long Spec START -->
-#### Examples
-![Relay_Verify](Relay_Verify.png)
-
-![Req](Relay_req.png) Hub makes a GET request to the Subscribers's callback 
-URL.
-
-    GET <subscriber_callback_url>?hub.mode=denied&hub.topic=<topic_url>&hub.
-      reason=<reason> HTTP/1.1
-
-![Res](Relay_res.png) Subscriber response:
-
-    HTTP/1.1 200 OK
-
-The specification does not specify what the subscriber response should be. It
-SHOULD be assumed the Subscriber can return any response and the Publisher
-will ignore it.
-
-<!-- Long Spec END -->
 
 <br/>
 <br/>
@@ -642,95 +323,17 @@ identical way - see Content Distribution.
 
 _Hub sends updates to Subscribers and any other Hubs_
 
-<!-- Long Spec START -->
-#### PuSH Specification
-
-![66](66.png) 
-> 7\.  Content Distribution
->
-> A content distribution request is an HTTP [RFC2616] POST request from hub to
-> the subscriber's callback URL with the payload of the notification. This
-> request MUST have a Content-Type corresponding to the type of the topic. The
-> hub MAY reduce the payload to a diff between two consecutive versions if its
-> format allows it.
-> 
-> The request MUST include a Link Header [RFC5988] with rel=hub pointing to
-> the Hub as well as a Link Header [RFC5988] with rel=self set to the topic
-> that's being updated. The Hub SHOULD combine both headers into a single Link
-> Header [RFC5988].
-> 
-> The successful response from the subscriber's callback URL MUST be an HTTP
-> [RFC2616] success (2xx) code. The hub MUST consider all other subscriber
-> response codes as failures; that means subscribers MUST NOT use HTTP
-> redirects for moving subscriptions. The response body from the subscriber
-> MUST be ignored by the hub. Hubs SHOULD retry notifications repeatedly until
-> successful (up to some reasonable maximum over a reasonable time period).
-> Subscribers SHOULD respond to notifications as quickly as possible; their
-> success response code SHOULD only indicate receipt of the message, not
-> acknowledgment that it was successfully processed by the subscriber.
-
-![99](99.png)
-
-#### Relay Specification
-<!-- Long Spec END -->
 
 (Meets and Extends the PuSH specification.)
 
 
 
-<!-- Long Spec START -->
-#### Examples
-
-![Relay_Distribute](Relay_Distribute.png)
-
-Publisher Request:
-
-    POST <subscriber_callback_url> HTTP/1.1
-    Content-Type: <topic_content_type>
-    Link: <hub_url>; rel=hub, <topic_url>; rel=self
-
-Subscriber Response (sucess):
-
-    HTTP/1.1 200 OK
-<!-- Long Spec END -->
 
 
 <br/><br/><a name="8."></a>
 ************************************************************************************************************************
 8. Authenticated Content Distribution
 ------------------------------------------------------------------------------------------------------------------------
-<!-- Long Spec START -->
-#### PuSH Specification
-
-![66](66.png) 
-> 8\.  Authenticated Content Distribution
->
-> If the subscriber supplied a value for hub.secret in their subscription
-> request, the hub MUST generate an HMAC signature of the payload and include
-> that signature in the request headers of the content distribution request.
-> The X-Hub-Signature header's value MUST be in the form sha1=signature where
-> signature is a 40-byte, hexadecimal representation of a SHA1 signature
-> [RFC3174]. The signature MUST be computed using the HMAC algorithm [RFC2104]
-> with the request body as the data and the hub.secret as the key.
->
-> When subscribers receive a content distribution request with the X-Hub-
-> Signature header specified, they SHOULD recompute the SHA1 signature with
-> the shared secret using the same method as the hub. If the signature does
-> not match, subscribers MUST still return a 2xx success response to
-> acknowledge receipt, but locally ignore the message as invalid. Using this
-> technique along with HTTPS [RFC2818] for subscription requests enables
-> simple subscribers to receive authenticated notifications from hubs without
-> the need for subscribers to run an HTTPS [RFC2818] server.
->
-> Please note however that this signature only ensures that the payload was
-> not forged. Since the notification also includes headers, these should not
-> be considered as safe by the subscriber, unless of course the subscriber
-> uses HTTPS [RFC2818] callbacks.
-
-![66](66.png) 
-
-#### Relay Specification
-<!-- Long Spec END -->
 
 TODO
 
