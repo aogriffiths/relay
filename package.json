@@ -6,8 +6,12 @@
     "start": "node app"
   },
   "dependencies": {
-    "express": "3.0.6",
+    "express": "~3.0.6",
     "jade": "*",
-    "http-link": "~0.2.1"
+    "http-link": "~0.2.1",
+    "kue": "~0.6.2"
+  },
+  "devDependencies": {
+    "mocha": "~1.13.0"
   }
 }

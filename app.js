@@ -3,18 +3,31 @@
  * Module dependencies.
  */
 
-var express = require('express')
-  , routes = require('./routes')
-  , user = require('./routes/user')
-  , http = require('http')
-  , path = require('path');
+var express = require('express');
+var routes = require('./routes');
+var user = require('./routes/user');
+var http = require('http');
+var path = require('path');
+var relay = require('./lib/relay');
+
 
 var app = express();
+var realyApp = relay.createApp();
 
-var relayApp = require('./lib/relay');
+var defaults = {
+  "store":"memmory",
+  "ContentType":"application/json"
+}
+
+
+var publisher = relay.createPublihser(defaults);
 
 app.use(express.logger('dev'));
 app.use('/relay', relayApp);
+
+publisher.createTopic("mytopic");
+
+publisher.pushEntry({"name":"newentry"});
 
 //partern one
 //app.use(expressapp);
