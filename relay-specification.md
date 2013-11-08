@@ -168,6 +168,11 @@ as an overview of the protocol and index to sections 4 to 7 in this specificatio
 ************************************************************************************************************************
 4. Discovery
 ------------------------------------------------------------------------------------------------------------------------
+_The Subscriber discovers the Hub(s) a Publisher is publishing to_
+
+<!-- Long Spec START -->
+![Relay_Discovery](Relay_Discovery.png)
+<!-- Long Spec END -->
 
 <!-- Long Spec START -->
 #### PuSH Specification
@@ -241,7 +246,7 @@ as an overview of the protocol and index to sections 4 to 7 in this specificatio
 <!-- Long Spec START -->
 #### Examples (Non-normative)
 
-![Relay_Discovery](Relay_Discovery.png)
+(See diagram above.)
 
 ![Req](Relay_req.png) Subscriber makes a GET or HEAD request to Publisher for a topic.
     
@@ -329,6 +334,10 @@ e.g.
 ### 5.1. Subscription Request
 
 _The Subscriber sends a Subscription Request to a Hub_
+
+<!-- Long Spec START -->
+![Relay_Subscribe](Relay_Subscribe.png)
+<!-- Long Spec END -->
 
 <!-- Long Spec START -->
 #### PuSH Specification
@@ -438,10 +447,11 @@ _The Subscriber sends a Subscription Request to a Hub_
     * `hub.secret` is present and is alphanumeric
 
 <!-- Long Spec START -->
+
 <a name="5.1.examples"></a>
 #### Examples
 
-![Relay_Subscribe](Relay_Subscribe.png)
+(See diagram above.)
 
 ![Req](Relay_req.png) Subscriber makes a POST request to the Publisher's hub URL.
 
@@ -488,6 +498,10 @@ e.g.
 ### 5.2. Subscription Validation 
 
 _The Hub validates the Subscription Request_
+
+<!-- Long Spec START -->
+![Relay_Validate](Relay_Validate.png)
+<!-- Long Spec END -->
 
 <!-- Long Spec START -->
 #### PuSH Specification
@@ -548,17 +562,15 @@ _The Hub validates the Subscription Request_
    Publishers should only distribute content to Hubs that they trust.)
 
 
-
 <!-- Long Spec START -->
 #### Examples
 
-![Relay_Validate](Relay_Validate.png)
+(See diagram above.)
 
 If validation fails the hub MUST inform the subscriber that the subscription
 has been denied. See section 5.5 of this specification.
 
 <!-- Long Spec END -->
-
 
 <br/>
 <a name="5.3."></a>
@@ -566,6 +578,10 @@ has been denied. See section 5.5 of this specification.
 ### 5\.3\. Subscriber Verification
 
 _The Publisher verifies the intent of the Subscriber_
+
+<!-- Long Spec START -->
+![Relay_Verify](Relay_Verify.png)
+<!-- Long Spec END -->
 
 <!-- Long Spec START -->
 #### PuSH Specification
@@ -623,7 +639,8 @@ _The Publisher verifies the intent of the Subscriber_
 
 <!-- Long Spec START -->
 #### Examples
-![Relay_Verify](Relay_Verify.png)
+
+(See diagram above.)
 
 ![Req](Relay_req.png) Hub makes a GET request to the Subscribers's callback URL.
 
@@ -657,6 +674,10 @@ _The Publisher verifies the intent of the Subscriber_
 _Hub informs the Subscriber when a subscription is denied_
 
 <!-- Long Spec START -->
+![Relay_Verify](Relay_Verify.png)
+<!-- Long Spec END -->
+
+<!-- Long Spec START -->
 #### Relay Specification
 <!-- Long Spec END -->
 
@@ -664,7 +685,8 @@ _Hub informs the Subscriber when a subscription is denied_
 
 <!-- Long Spec START -->
 #### Examples
-![Relay_Verify](Relay_Verify.png)
+
+(See diagram above.)
 
 ![Req](Relay_req.png) Hub makes a GET request to the Subscriber's callback 
 URL.
@@ -690,6 +712,10 @@ will ignore it.
 _The Publisher sends updates to it's Hubs and any other Subscribers_
 
 <!-- Long Spec START -->
+![Relay_Publish](Relay_Publish.png)
+<!-- Long Spec END -->
+
+<!-- Long Spec START -->
 #### PuSH Specification
 
 ![66](66.png)
@@ -709,13 +735,17 @@ _The Publisher sends updates to it's Hubs and any other Subscribers_
 Different to part 3, 3rd bullet, but that's fine as per part 6_)
 
 <!-- Long Spec START -->
-![Relay_Publish](Relay_Publish.png)
-
 PuSH leaves it open as to how a Publisher sends content to a Hub. With Relay
 Publishers and Hubs both send tehir content to their Subscribers in an
 identical way - see Content Distribution.
 <!-- Long Spec END -->
 
+
+<!-- Long Spec START -->
+#### Examples
+
+(See diagram above.)
+<!-- Long Spec END -->
 
 <br/><br/><a name="7."></a>
 ************************************************************************************************************************
