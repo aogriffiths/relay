@@ -2,11 +2,11 @@ var fs       = require('fs');
 var readline = require('readline');
 var stream   = require('stream');
 
-var instream = fs.createReadStream('README.md');
+var instream = fs.createReadStream('relay-specification.md');
 var outstream = new stream;
 var rl = readline.createInterface(instream, outstream);
 
-var writeStream = fs.createWriteStream('README-SHORT.md', {flags: 'w'});
+var writeStream = fs.createWriteStream('relay-specification-short.md', {flags: 'w'});
 
 var ignore = false;
 
