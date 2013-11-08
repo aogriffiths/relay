@@ -200,7 +200,7 @@ as an overview of the protocol and index to sections 4 to 7 in this specificatio
 
 1. Adhere to section 4. "Discovery" in the PuSH v0.4 specification.
 
-<a name="4.2">
+<a name="4.2"></a>
 2. __Topic URLS:__ The URL from which the topic is retrieved during discovery 
    SHOULD be referred  to as the "requested_topic_url". The the self link header
    returned (with  rel=self) SHOULD be referred to as the
@@ -420,8 +420,9 @@ _The Subscriber sends a Subscription Request to a Hub_
    Sends Subscription Request" in the PuSH v0.4 specification.
 
 2. The topic URL (hub.topic) MUST be the advertised_topic_url as defined in 
-   [section 4 item 2(#4.2) of this specification. The hub URL mus
+   [section 4 point 2](#4.2) of this specification. The hub URL mus
 
+<a name="5.1.3"></a>
 3. A well formed subscription request MUST meet the following criteria:
     * `hub.callback` is present and is a valid URL 
     * `hub.mode` is present and is either "subscribe" or "unsubscribe". If it is
@@ -470,7 +471,8 @@ The subscriber callback url is under `/relay/callback/`
     [https|http]://<subscriber_domain>/relay/callback/<unique_string>
 
 Where `unique_string` is a string that is unique to the subscriber domain. 200
-characters long and alphanumeric only.
+characters long and alphanumeric. (Having a long callback URL helps ensure it cannot 
+be discovered by a brute force attack and the spammed or DDOS attacked.)
 
 e.g.
 
@@ -531,7 +533,7 @@ _The Hub validates the Subscription Request_
 1. Adhere to section 5.2 "Subscription Validation" in the PuSH v0.4 specification.
 
 2. Validation SHOULD include the hub checking the subscription request is well 
-   formed as defined in section 5.1 point 3 in this specification.
+   formed as defined in [section 5.1 point 3](#5.1.3) in this specification.
 
 3. Validation MAY include ensuring the subscriber or publisher have not 
    been blacklisted and the Hub is "willing" to maintain the new subscription
