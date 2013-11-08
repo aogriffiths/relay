@@ -168,7 +168,7 @@ as an overview of the protocol and index to sections 4 to 7 in this specificatio
 ************************************************************************************************************************
 4. Discovery
 ------------------------------------------------------------------------------------------------------------------------
-_The Subscriber discovers the Hub(s) a Publisher is publishing to_
+_The Subscriber discovers from a Publisher the Hub(s) which it is publishing to._
 
 <!-- Long Spec START -->
 ![Relay_Discovery](Relay_Discovery.png)
@@ -205,8 +205,8 @@ _The Subscriber discovers the Hub(s) a Publisher is publishing to_
 
 1. Adhere to section 4. "Discovery" in the PuSH v0.4 specification.
 
-<a name="4.2"></a>
-2. __Topic URLS:__ The URL from which the topic is retrieved during discovery 
+2. <a name="4.2"></a> 
+   __Topic URLS:__ The URL from which the topic is retrieved during discovery 
    SHOULD be referred  to as the "requested_topic_url". The the self link header
    returned (with  rel=self) SHOULD be referred to as the
    "advertised_topic_url". Generally the requested_topic_url and the
