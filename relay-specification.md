@@ -43,11 +43,9 @@ publish subscribe pattern.
 Introduction
 ------------------------------------------------------------------------------------------------------------------------
 
-Relay is inspired by and compatible with PubSubHubbub (PuSH) and has some
+Relay is inspired by and compatible with PubSubHubbub (PuSH). It also has some
 additional features that you might find useful. Relay considers any server to
-be capable of being a Publisher, a Subscriber, a Hub or all three.
-
-Content is _Relayed_ from the Publisher to Subscribers, potentially via one or more Hubs.
+be capable of being a Publisher, a Subscriber, a Hub or all three and content is effectively "_relayed_" from the Publisher to Subscribers (optionally) via one or more Hubs.
 
 <!-- Long Spec START -->
 What does this mean? A picture is worth a thousand words:
@@ -55,17 +53,17 @@ What does this mean? A picture is worth a thousand words:
 ![Relay_PuSH](Relay_PuSH.png)
 <!-- Long Spec END -->
 
-The main difference to PuSH is that Relay requires all Publishers distribute 
-content using exactly the same protocol as Hubs use to distribute content. This means
-a Publisher sends content to a Hub in exactly the same way as a Hub sends content to 
-a Subscriber. The benefits are:
+The main difference to PuSH is that Relay requires all Publishers publish 
+their content using exactly the same protocol as Hubs use to distribute content.  
+In other words a Publisher sends content to a Hub in exactly the same way as a 
+Hub sends content to a Subscriber. The benefits are:
 
 * Simplicity - All content is send between Publishers, Subscribers and Hubs 
   using the same protocol.
 * Compatibility - Relay is compatible with PuSH v0.4.
-* Relaying - A chain of Hubs can be created for "_relaying_" content. This can be 
-  useful for distributing load or moving content from within a private network (using a private Hub) 
-  to the public Internet (using a second public Hub).
+* Relaying - A chain of Hubs can be created for "_relaying_" content. (This can be 
+  useful for distributing load or moving content from within a private network, using a private Hub, 
+  to the public Internet, using a public Hub.)
 
 
 
@@ -115,7 +113,7 @@ interpreted as described in [RFC2119](http://www.ietf.org/rfc/rfc2119.txt).
 
 * All Relay Publishers are their own Hubs. 
 * A Publisher follows the same approach to _publishing_ content as a Hub
-follows for _distributing_ it. PuSH uses "Publishing" and "distributing" to
+follows for _distributing_ it. PuSH uses "publishing" and "distributing" to
 refer to slightly different things but Relay seeks to make them the same
 thing.
 * Hubs subscribe to Publishers or other Hubs.
@@ -131,7 +129,8 @@ thing.
 The protocol for Relay following the protocol PuSH and is outlined in sections
 4 to 7 of this specification.
 
-<!-- Long Spec START --> The following information is non-normative but serves
+<!-- Long Spec START --> 
+The following information is non-normative but serves
 as an overview of the protocol and index to sections 4 to 7 in this specification.
 
 * __[4. Discovery ](#4.)__ - A Subscriber discovers a Topic from a Publisher
@@ -201,6 +200,7 @@ as an overview of the protocol and index to sections 4 to 7 in this specificatio
 
 1. Adhere to section 4. "Discovery" in the PuSH v0.4 specification.
 
+<a name="4.2">
 2. __Topic URLS:__ The URL from which the topic is retrieved during discovery 
    SHOULD be referred  to as the "requested_topic_url". The the self link header
    returned (with  rel=self) SHOULD be referred to as the
@@ -260,9 +260,7 @@ in the Topic.)
 
 #### Reference Implementation
 
-__requested_topic_url & advertised_topic_url:__ 
-
-MAY be any URL 
+__requested_topic_url & advertised_topic_url__ MAY be any URL:
 
     [https|http]://<domain>/path
 
@@ -271,9 +269,7 @@ e.g.
     https://example.com/content_feeds/breaking_news
 
 
-__advertised_hub_url:__ 
-
-The hub url SHOULD end with `/relay/hub`
+__advertised_hub_url__  SHOULD end with `/relay/hub`
 
     [https|http]://<hub_domain>/relay/hub
 
@@ -315,13 +311,16 @@ e.g.
 
 1. Adhere to section 5. "Subscribing and Unsubscribing" in the PuSH 0.4 specification
 
-2. (non-normative) Sections 5.1, 5.2, 5.3 and 5.4 in this specification map
-   to the four bullets in section 5 of the PuSH 0.4 specification. Sections 5.1, 5.2,
-   5.3 in this specification relate to sections of the same numbers in the PuSH 0.4
-   specification. Section 5.4 in this specification describes subscription renewal / reconfirmation, 
-   which is mentioned in various places in the PuSH 0.4 specification. Section 5.5 
-   in this specification describes subscription
-   denying, which is referred to in section 5.2 of the PuSH 0.4 specification.
+2. (non-normative) The following notes are useful if you wish to read the Relay 
+   specification in conjunction with the PuSH specification:
+   * Sections 5.1, 5.2, 5.3 and 5.4 in this specification map to the four bullets in 
+     section 5 of the PuSH 0.4 specification. 
+   * Sections 5.1, 5.2, 5.3 in this specification relate to sections of the same 
+     numbers in the PuSH 0.4 specification. 
+   * Section 5.4 in this specification describes subscription renewal / reconfirmation, 
+     which is mentioned in various places in the PuSH 0.4 specification. 
+   * Section 5.5 in this specification describes subscription
+     denying, which is referred to in section 5.2 of the PuSH 0.4 specification.
 
 
 <br/>
@@ -421,17 +420,21 @@ _The Subscriber sends a Subscription Request to a Hub_
    Sends Subscription Request" in the PuSH v0.4 specification.
 
 2. The topic URL (hub.topic) MUST be the advertised_topic_url as defined in 
-   section 4 paragraph 2 of this specification. The hub URL mus
+   [section 4 item 2(#4.2) of this specification. The hub URL mus
 
-3. A well formed subscription request MUST:
-    * hub.callback is present and is a valid URL 
-    * hub.mode is present and is either "subscribe" or "unsubscribe". If it is
+3. A well formed subscription request MUST meet the following criteria:
+    * `hub.callback` is present and is a valid URL 
+    * `hub.mode` is present and is either "subscribe" or "unsubscribe". If it is
       "unsubscribe" the Hub MUST have an existing subscription for the given tuple 
       {hub.topic, hub.callback}.
-    * advertised_topic_url is present and is one the Hub is willing to distribute. 
+    * `hub.topic` is present and is one the Hub is able to distribute. 
       This means the Hub is either already subscribing to this topic or the Hub
       is willing to "auto subscribe" and set up a new subscription to this
       topic.
+
+4. A well formed subscription request MAY meet the following criteria:
+    * `hub.lease_seconds` is present and is a number
+    * `hub.secret` is present and is alphanumeric
 
 <!-- Long Spec START -->
 <a name="5.1.examples"></a>
@@ -821,6 +824,25 @@ References
   (https://pubsubhubbub.googlecode.com/git/pubsubhubbub-core-0.4.html)
 * RFC4287  Nottingham, M., Ed. and R. Sayre, Ed., [The Atom Syndication Format]
   (http://www.ietf.org/rfc/rfc4287.txt)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
