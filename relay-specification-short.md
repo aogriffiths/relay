@@ -279,28 +279,17 @@ _The Hub validates the Subscription Request_
 1. Adhere to section 5.2 "Subscription Validation" in the PuSH v0.4 specification.
 
 2. Validation SHOULD include the hub checking the subscription request is well 
-   formed as defined in [section 5.1 point 3](#5.1.3) in this specification.
+   formed as defined in [section 5.1 point 3](#5.1.3) of this specification.
 
 3. Validation MAY include ensuring the subscriber or publisher have not 
    been blacklisted and the Hub is "willing" to maintain the new subscription
    that is being requested.
 
-> If (and when), the subscription is accepted, the hub MUST perform the
-> verification of intent of the subscriber.
->
-> If (and when), the subscription is denied, the hub MUST inform the
-> subscriber by sending an HTTP [RFC2616] GET request to the subscriber's
-> callback URL as given in the subscription request. This request has the
-> following query string arguments appended (format described in Section
-> 17.13.4 of [W3C.REC‑html401‑19991224]):
-
 4. If (and when) validation succeeds (the subscription is accepted) the hub MUST 
-   complete the Verification step. See section 5.3 of this specification.
+   complete the Verification step. See [section 5.3](#5.3) of this specification.
 
 5. If (and when) validation fails (the subscription is denied) the hub MUST 
-   inform the subscriber that the subscription
-   has been denied. See section 5.5 of this specification.
-
+   complete the Denial step. See [section 5.5](#5.5) of this specification.
 
 6. The Hub MAY integrate with the original Publisher for further validation of 
    the subscription. This specification does not recommend how that is done but
@@ -321,7 +310,7 @@ _The Publisher verifies the intent of the Subscriber_
 
 
 
-(Meets the PuSH Specification)
+1. Adhere to section 5.3 "Hub Verifies Intent of the Subscriber" in the PuSH v0.4 specification.
 
 
 <br/>
@@ -329,8 +318,13 @@ _The Publisher verifies the intent of the Subscriber_
 ************************************************************************************************************************
 ### 5.4. Subscription Renewal
 
-3.  Subscriber is given a number of `lease_seconds` and MUST resubscribe before
+_The Subscriber sends a Subscription Request to a Hub_
+
+
+1. Subscriber is given a number of `lease_seconds` and MUST resubscribe before
    these have elapsed.
+
+2. Re-subscription follows exactly the same steps as the initial subscription.
 
 <br/>
 <a name="5.5."></a>
@@ -341,7 +335,7 @@ _Hub informs the Subscriber when a subscription is denied_
 
 
 
-(Meets the PuSH Specification, see section 5.2 in the PuSH 0.4 specification)
+1. Adhere to section 5.2 "Subscription Validation" (third paragraph onwards) in the PuSH v0.4 specification.
 
 
 <br/>
