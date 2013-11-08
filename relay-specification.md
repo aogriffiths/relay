@@ -431,16 +431,17 @@ _The Subscriber sends a Subscription Request to a Hub_
 2. The topic URL (hub.topic) MUST be the advertised_topic_url as defined in 
    [section 4 point 2](#4.2) of this specification. The hub URL mus
 
-<a name="5.1.3"></a>
-3. A well formed subscription request MUST meet the following criteria:
+
+3. <a name="5.1.3"></a>
+   A well formed subscription request MUST meet the following criteria:
     * `hub.callback` is present and is a valid URL 
     * `hub.mode` is present and is either "subscribe" or "unsubscribe". If it is
-      "unsubscribe" the Hub MUST have an existing subscription for the given tuple 
-      {hub.topic, hub.callback}.
+        "unsubscribe" the Hub MUST have an existing subscription for the given tuple 
+        {hub.topic, hub.callback}.
     * `hub.topic` is present and is one the Hub is able to distribute. 
-      This means the Hub is either already subscribing to this topic or the Hub
-      is willing to "auto subscribe" and set up a new subscription to this
-      topic.
+        This means the Hub is either already subscribing to this topic or the Hub
+        is willing to "auto subscribe" and set up a new subscription to this
+        topic.
 
 4. A well formed subscription request MAY meet the following criteria:
     * `hub.lease_seconds` is present and is a number
