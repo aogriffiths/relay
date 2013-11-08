@@ -7,7 +7,9 @@ _Publish. Subscribe. Syndicate._
     P      S 
     <-------  
 
-The core specification.
+Core specification
+------------------
+
 * Relay - A protocol for syndicating content using a publish subscribe pattern.
 * __Status:__ DRAFT
 * __Latest Published Version:__
@@ -20,12 +22,16 @@ The core specification.
     *  Adam Griffiths
 * __See Also:__ [https://github.com/aogriffiths/relay/blob/spec-master/README.md]
 
+
 Long versions includes examples and useful extracts from the PubSubHubbub
 specification. Short versions omit these and other non-normative information.
+
+The Published versions are official approved releases of the specification. The Editor's Draft
+is the latest _work in progress_ version.
+
 If you are implementing Relay or would find background and examples useful read
 the long versions. If you are only looking for the normative parts of the
-specifications or to see how simple they are read the short versions.
-
+specifications or to see how simple the specification really is, read the short versions.
 
 
 <br/>
@@ -58,10 +64,10 @@ their content using exactly the same protocol as Hubs use to distribute content.
 In other words a Publisher sends content to a Hub in exactly the same way as a 
 Hub sends content to a Subscriber. The benefits are:
 
-* Simplicity - All content is send between Publishers, Subscribers and Hubs 
+* __Simplicity:__ All content is send between Publishers, Subscribers and Hubs 
   using the same protocol.
-* Compatibility - Relay is compatible with PuSH v0.4.
-* Relaying - A chain of Hubs can be created for "_relaying_" content. (This can be 
+* __Compatibility:__ Relay is compatible with PuSH v0.4.
+* __Relaying:__ A chain of Hubs can be created for "_relaying_" content. (This can be 
   useful for distributing load or moving content from within a private network, using a private Hub, 
   to the public Internet, using a public Hub.)
 
@@ -322,8 +328,8 @@ e.g.
      section 5 of the PuSH 0.4 specification. 
    * Sections 5.1, 5.2, 5.3 in this specification relate to sections of the same 
      numbers in the PuSH 0.4 specification. 
-   * Section 5.4 in this specification describes subscription renewal / reconfirmation, 
-     which is mentioned in various places in the PuSH 0.4 specification. 
+   * Section 5.4 in this specification describes subscription reconfirming / renewal, 
+     of a subscription which is mentioned in various places in the PuSH 0.4 specification. 
    * Section 5.5 in this specification describes subscription
      denying, which is referred to in section 5.2 of the PuSH 0.4 specification.
 
@@ -554,7 +560,24 @@ _The Hub validates the Subscription Request_
    been blacklisted and the Hub is "willing" to maintain the new subscription
    that is being requested.
 
-4. The Hub MAY integrate with the original Publisher for further validation of 
+> If (and when), the subscription is accepted, the hub MUST perform the
+> verification of intent of the subscriber.
+>
+> If (and when), the subscription is denied, the hub MUST inform the
+> subscriber by sending an HTTP [RFC2616] GET request to the subscriber's
+> callback URL as given in the subscription request. This request has the
+> following query string arguments appended (format described in Section
+> 17.13.4 of [W3C.REC‑html401‑19991224]):
+
+4. If (and when) validation succeeds (the subscription is accepted) the hub MUST 
+   complete the Verification step. See section 5.3 of this specification.
+
+5. If (and when) validation fails (the subscription is denied) the hub MUST 
+   inform the subscriber that the subscription
+   has been denied. See section 5.5 of this specification.
+
+
+6. The Hub MAY integrate with the original Publisher for further validation of 
    the subscription. This specification does not recommend how that is done but
    an approach may be specified in a suitable a relay extension. (However it 
    is worth noting that after a Publisher distributes content to a Hub is 
@@ -568,8 +591,11 @@ _The Hub validates the Subscription Request_
 
 (See diagram above.)
 
-If validation fails the hub MUST inform the subscriber that the subscription
-has been denied. See section 5.5 of this specification.
+There are no specific http examples to provide here because the
+protocol which the Hub should use to integrate with the Publisher for Validation
+is not defined in this specification. The examples given in sections 5.1, 5.3 and 
+5.4 and 5.5 cover all communication between the Hub and the Subscriber.
+
 
 <!-- Long Spec END -->
 
