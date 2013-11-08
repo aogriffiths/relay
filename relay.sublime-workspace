@@ -1,0 +1,572 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"options",
+				"options_raw"
+			],
+			[
+				"re",
+				"reason"
+			],
+			[
+				"res",
+				"resoncode"
+			],
+			[
+				"sen",
+				"send"
+			],
+			[
+				"s",
+				"subscription"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "nodejs/apps/relayWebAPI.js",
+			"settings":
+			{
+				"buffer_size": 3448,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "\nvar relay = module.exports = {}; \n\nvar responseReasons = relay.responseReasons = {\n  2001: {httpequiv:201, description:\"Sucessfully created resource\"},\n  2002: {httpequiv:202, description:\"Sucessfully deleted resource\"},\n  4000: {httpequiv:400, description:\"Unknown Error\"},\n  4001: {httpequiv:400, description:\"hub.callback required\"},\n  4002: {httpequiv:400, description:\"hub.mode required\"},\n  4003: {httpequiv:400, description:\"New topic requires field 'topic.name' in options\"},\n  4004: {httpequiv:400, description:\"New topic requires field 'topic.content_type' in options\"},\n  4005: {httpequiv:409, description:\"Topic of this name already exists. A unique topic name is required.\"},\n  4006: {httpequiv:409, description:\"Topic of this name does not exist. An existing topic is required.\"},\n  4007: {httpequiv:400, description:\"This api method requires an options argument\"}\n};\n\n/*\n  RelayAPI.topics  \n    .all()                   => [Topic]\n    .create()                => Topic\n    .read()                  => Topic\n    .update()                => Topic\n    .delete()                => null\n    .on(\"change\", callback)  => list [{topic_id, new_version}]\n\n  Topic {topic_id, topic_name, topic_uri, ...}\n\n  Topic.entries    \n    .all()                   => [Entry]\n    .create(Entry)           => id\n    .read(id)                => Entry\n    .update(Entry)           => true\n    .delete()                => true\n    .on(\"change\", callback)  => subscriptions.add(this.parent.topic_id, callback)\n\n  Entry {entry.id, entry.name, entry.uri, ...}\n\n  RelayAPI.subscriptions\n    .all()      \n    .create()  \n    .read()    \n    .update()  \n    .delete() \n\n  Subscription {topid_id, callback}\n\n  callback is a {name:name, call:function}     Type 1 - function will be called with the changed entries (cannot be persisited)\n  callback is a {post:url}                     Type 2 - url will be posted to with the changed entries\n\n\n  When multiple servers are in _clustered_ mode any operations on topics, \n  entries and subscriptions are synchronised across every API instance\n  the cluster.\n\n  Callbacks in thise mode require special consideration. Should every instance act on the callback or just one?\n\n\n  RelayAPI   1:*>  Subscription  //Hubs or Subscriber \n\n     Topic   1:*   Entry\n\n       Hub   1:*>  Subscription\n\n     Topic   = {topic_url, content_type}\n\nSubscription = {topic_url, subscriber_callback_url}\n\n*/\n\nvar RelayAPI = relay.RelayAPI = function(options){\n  this.topics = new Topics();\n}\n\nRelayAPI.prototype.responseReasons = function(){\n  return responseReasons;\n}\n// TOPICS\nvar Topics = relay.Topics = function(options){\n  //console.log(\"creating\");\n  this.list = {};\n  //console.log(this.list);\n}\n\nTopics.prototype.create = function(options){\n  options.must_not_exist = true;\n  return this.upsert(options);\n}\n\nTopics.prototype.update = function(options){\n  options.must_exist = true;\n  return this.upsert(options);\n}\n\nTopics.prototype.upsert = function(options){\n  with( a_sanitised( options ).list([\n    {name: 'topic_name',   orthrow: 4003},\n    {name: 'original_topic_name'},\n    {name: 'topic_content_type', orthrow: 4004},\n    {name: 'must_exist', default: false},\n    {name: 'must_not_exist', default: false},\n    {name: 'patch', default: false}\n  ])){    \n    original_topic_name = original_topic_name || topic_name;\n    var exists = this.list.hasOwnProperty(original_topic_name);\n    if(exists && must_not_exist) throw 4005;\n    if(!exists && must_exist) throw 4006;\n\n    //current time in UTC format for timestamping with\n    var now = new Date().toJSON();\n\n    //Get or create the topic\n    var topic;\n    if(exists){\n      if(patch){ //Update in situ (previous values are kept if no new value is provided)\n        topic = this.list[original_topic_name];\n      }else{     //Update with overwrite (only created data is kept)\n        topic = {}\n        topic.created_timestamp = this.list[original_topic_name].created_timestamp;       \n      }\n    }else{\n      //Brand new\n      topic = {}\n      topic.created_timestamp  = now; \n      topic.name               = topic_name;\n    }\n\n    //Set the required fields:\n    topic.name                 = topic_name;\n    topic.content_type         = topic_content_type;\n    topic.modified_timestamp   = now;\n\n    //Save it\n    this.list[topic_name]      = topic;\n\n    //Delete the old version if needs be\n    if(original_topic_name != topic_name){\n      delete this.list[original_topic_name];\n    }\n\n    //return it   \n    return topic;\n  }\n}\n\nTopics.prototype.readall = function(){  \n  return this.list;\n}\n\nTopics.prototype.read = function(options){\n  with( a_sanitised( options ).list([\n    {name: 'topic_name',   orthrow: 4003}\n  ])){\n    return this.list[topic_name];\n  }\n}\n\nTopics.prototype.delete = function(options){\n  with( a_sanitised( options ).list([\n    {name: 'topic_name',   orthrow: 4003},\n    {name: 'must_exist', default: true}\n  ])){\n    var exists = this.list.hasOwnProperty(topic_name);\n    if(!exists && must_exist) throw 4006;\n    delete this.list[topic_name];\n    return {result: 'ok'};  // {responsecode: 2002, data: null}\n  }\n}\n\n\n\n\n//UTITITY FUNCTIONS\n//'options' contains the raw options as passed to the function\n//'list' contains those which are required, and whether to throw an error if they are not provided.\nfunction a_sanitised(options){\n  options.__proto__.list = function(list){\n    sanitised = {};    \n    for(i=0; i<list.length; i++){\n      var name = list[i].name;\n      var value = options[name];\n      if(! options.hasOwnProperty(name)){\n        if(list[i].default){\n          sanitised[name] = list[i].default;          \n        }else if(list[i].orthrow){\n          throw list[i].orthrow;\n        }else{\n          sanitised[name] = undefined;          \n        }\n      }else{\n        sanitised[name] = value;\n      }\n    }\n    return sanitised;\n  }\n  return options;\n}\n",
+			"file": "nodejs/lib/relay/index.js",
+			"file_size": 4340,
+			"file_write_time": 1382084934000000,
+			"settings":
+			{
+				"buffer_size": 5870,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/Users/agriffiths/Library/Application Support/Sublime Text 2/Packages/User/Default (OSX).sublime-keymap",
+			"settings":
+			{
+				"buffer_size": 4,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "nodejs/test/test.js",
+			"settings":
+			{
+				"buffer_size": 10757,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "nodejs/routes/index.js",
+			"settings":
+			{
+				"buffer_size": 110,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "Relay\n=====\n\n_Publish. Subscribe. Syndicate._\n\n    ------->\n    P      S \n    <-------  \n\nThe core specification.\n* Relay - A protocol for syndicating content using a publish subscribe pattern.\n* __Status:__ DRAFT\n* __Latest Published Version:__\n    *  __Long Version:__ [https://github.com/aogriffiths/relay/blob/spec-published/relay-specification.md]\n    *  __Short Version:__ [https://github.com/aogriffiths/relay/blob/spec-published/relay-specification-short.md]\n*  __Latest Editor's Draft:__\n    *  __Long Version:__ [https://github.com/aogriffiths/relay/blob/spec-master/relay-specification.md]\n    *  __Short Version:__ [https://github.com/aogriffiths/relay/blob/spec-master/relay-specification-short.md]\n*  __Editor(s):__ \n    *  Adam Griffiths\n* __See Also:__ [https://github.com/aogriffiths/relay/blob/spec-master/README.md]\n\nLong versions includes examples and useful extracts from the PubSubHubbub\nspecification. Short versions omit these and other non-normative information.\nIf you are implementing Relay or would find background and examples useful read\nthe long versions. If you are only looking for the normative parts of the\nspecifications or to see how simple they are read the short versions.\n\n\n\n<br/>\n************************************************************************************************************************\nAbstract\n------------------------------------------------------------------------------------------------------------------------\n\nThis document specifies \"Relay\", a protocol for syndicating content following the \npublish subscribe pattern.\n\n\n\n<br/>\n************************************************************************************************************************\nIntroduction\n------------------------------------------------------------------------------------------------------------------------\n\nRelay is inspired by and compatible with PubSubHubbub (PuSH) and has some\nadditional features that you might find useful. Relay considers any server to\nbe capable of being a Publisher, a Subscriber, a Hub or all three.\n\nContent is _Relayed_ from the Publisher to Subscribers, potentially via one or more Hubs.\n\n<!-- Long Spec START -->\nWhat does this mean? A picture is worth a thousand words:\n\n![Relay_PuSH](Relay_PuSH.png)\n<!-- Long Spec END -->\n\nThe main difference to PuSH is that Relay requires all Publishers distribute \ncontent using exactly the same protocol as Hubs use to distribute content. This means\na Publisher sends content to a Hub in exactly the same way as a Hub sends content to \na Subscriber. The benefits are:\n\n* Simplicity - All content is send between Publishers, Subscribers and Hubs \n  using the same protocol.\n* Compatibility - Relay is compatible with PuSH v0.4.\n* Relaying - A chain of Hubs can be created for \"_relaying_\" content. This can be \n  useful for distributing load or moving content from within a private network (using a private Hub) \n  to the public Internet (using a second public Hub).\n\n\n\n<br/>\n<a name=\"1.\"></a>\n************************************************************************************************************************\n1. Notation and Conventions\n------------------------------------------------------------------------------------------------------------------------\n\nThe key words \"MUST\", \"MUST NOT\", \"REQUIRED\", \"SHALL\", \"SHALL NOT\", \"SHOULD\",\n\"SHOULD NOT\", \"RECOMMENDED\", \"MAY\", and \"OPTIONAL\" in this document are to be\ninterpreted as described in [RFC2119](http://www.ietf.org/rfc/rfc2119.txt).\n\n\n\n<br/>\n<a name=\"2.\"></a>\n************************************************************************************************************************\n2. Definitions\n------------------------------------------------------------------------------------------------------------------------\n\n### Specific Definitions\n\n* __PuSH:__ When the word \"push\" is capitalised as \"PuSH\" it refers to\n  PubSubHubbub, and unless otherwise specified, version 0.4.\n* __Topic/Feed:__ The words \"feed\" and \"topic\" are used interchangeably. A Topic\n  is the unit to which one can subscribe to. It is a collection of entries.\n* __Entry/Item:__ A topic is a collection of entries (Synonymous with a feed\n  being a collection of items).\n* __Publisher:__ (_noun_). An entity that sends notifications of Changes to a\n  Topic.\n* __Originating Publisher:__ (_noun_). The Publisher entity that owns a Topic.\n  They are the originating source and the only system where changes to\n  the topic and it's entries can be authored.\n* __To publish:__ (_verb_). The process of notifying subscribers of changes to a\n  Topic. The originating Publisher MUST _publish_ the Topic using the Relay\n  specification. Other systems MAY also re-_publish_ the Topic, in which case\n  they are acting as a Hub.\n* __Subscriber:__ (_noun_). An entity that receives notifications of changes to\n  a Topic.\n* __To subscribe:__ (_verb_). The process of requesting a Publisher publishes to\n  a Subscriber on an on going basis. Usually initiated by the subscriber.\n* __Hub:__ An entity that both subscribers to a Topic and publishes it. A Hub\n  re-publishes (\"_relays_\") a Topic.\n\n### General Concepts\n\n* All Relay Publishers are their own Hubs. \n* A Publisher follows the same approach to _publishing_ content as a Hub\nfollows for _distributing_ it. PuSH uses \"Publishing\" and \"distributing\" to\nrefer to slightly different things but Relay seeks to make them the same\nthing.\n* Hubs subscribe to Publishers or other Hubs.\n* Subscribers subscribe to Hubs or Publishers.\n\n\n<br/>\n<a name=\"3.\"></a>\n************************************************************************************************************************\n3. High-level protocol flow\n------------------------------------------------------------------------------------------------------------------------\n\nThe protocol for Relay following the protocol PuSH and is outlined in sections\n4 to 7 of this specification.\n\n<!-- Long Spec START --> The following information is non-normative but serves\nas an overview of the protocol and index to sections 4 to 7 in this specification.\n\n* __[4. Discovery ](#4.)__ - A Subscriber discovers a Topic from a Publisher\n  and how to subscribe to it.\n\n* __[5. Subscription ](#5.)__ - The Subscriber subscribes to the Topic to\n  receive notification when it changes.\n    * __[5.1. Subscription Request ](#5.1.)__ - The Subscriber sends a \n      Subscription Request to a Hub. \n    * __[5.2. Subscription Validation ](#5.2.)__ - The Hub validates the \n      Subscription Request.\n    * __[5.3. Subscriber Verification ](#5.3.)__ - The Hub verifies the intent of\n      the Subscriber.\n    * __[5.4. Subscription Renewall](#5.4.)__ - The Hub periodically confirms \n      with the Subscriber to check if the subscription is still required.\n    * __[5.5. Subscription Denial ](#5.5.)__ - The Hub informs the Subscriber that\n      the subscription has been denied and is not (or no longer) active.\n\n* __[6. Publishing ](#6.)__ - Publishers POST any topic changes to their subscriber(s)\n  (which many be Hubs). \n\n* __[7. Content Distribution ](#7.)__ - When Hubs receive\n  POSTed Topic changes the POST them on to their subscriber(s), which many also\n  be Hubs, so the chain continues until all Hubs and Subscribers are reached.\n  (_Publishing and Relay-Publishing are done in an identical way and follow the\n  PusH specification part 7_)\n\n* __[8. Authenticated Content Distribution ](#8.)__ - \n\n<!-- Long Spec END -->\n\n\n<br/>\n<a name=\"4.\">\n************************************************************************************************************************\n4. Discovery\n------------------------------------------------------------------------------------------------------------------------\n\n<!-- Long Spec START -->\n#### PuSH Specification\n\n![66](66.png)\n> 4\\. Discovery\n\n> A potential subscriber initiates discovery by retrieving (GET or HEAD\n> request) the topic to which it wants to subscribe. The HTTP [RFC2616]\n> response from the publisher MUST include at least one Link Header [RFC5988]\n> with rel=hub (a hub link header) as well as exactly one Link Header\n> [RFC5988] with rel=self (the self link header). The former MUST indicate the\n> exact URL of a PubSubHubbub hub designated by the publisher. If more than\n> one URL is specified, it is expected that the publisher pings each of these\n> URLs, so the subscriber may subscribe to one or more of these. The latter\n> will point to the permanent URL for the resource being polled.\n\n> In the absence of HTTP [RFC2616] Link headers, subscribers MAY fall back to\n> other methods to discover the hub(s) and the canonical URI of the topic. If\n> the topic is an XML based feed, it MAY use embedded link elements as\n> described in Appendix B of Web Linking [RFC5988]. Similarly, for HTML pages,\n> it MAY use embedded link elements as described in Appendix A of Web Linking\n> [RFC5988]. Finally, publishers MAY also use the Well-Known Uniform Resource\n> Identifiers [RFC5785] .host-meta to include the <Linkelement with rel=\"hub\".\n\n![99](99.png)\n\n#### Relay Specification\n<!-- Long Spec END -->\n\n1. Adhere to section 4. \"Discovery\" in the PuSH v0.4 specification.\n\n2. __Topic URLS:__ The URL from which the topic is retrieved during discovery \n   SHOULD be referred  to as the \"requested_topic_url\". The the self link header\n   returned (with  rel=self) SHOULD be referred to as the\n   \"advertised_topic_url\". Generally the requested_topic_url and the\n   advertised_topic_url will be the same and are jointly be referred to as the\n   \"topic_url\" in the Relay and PuSH specifications. If there is any ambiguity,\n   topic_url MUST be assumed to mean the advertised_topic_url when one is\n   available and the requested_topic_url when there is not. In effect this means\n   the advertised_topic_url overrides the requested_topic_url.\n\n3. __Hub Links:__ There MAY be more than one hub link header (with rel=hub). If \n   so Subscribers MAY subscriber to one or more Hub. Subscribing to one is\n   RECOMMENDED and Subscribers SHOULD use the first first hub link provided\n   unless there is a reason not to. Publishes SHOULD put their preferred hub\n   first in the order of hub link headers. The selected Hub URL SHOULD be\n   referred to as the \"advertised_hub_url\". (If there were several Hubs advertised \n   this might more accurately be called the selected_hub_url_from_the_advertised_urls\n   but this documentation abbreviates it to just the advertised_hub_url!)\n\n4. __Publisher's Own Hub:__ Relay requires all Publishers MUST be capable of \n   being their own hub. It is therefore RECOMMENDED that at least one hub link\n   header returned by a Publisher is their own Hub URL. Publishers MAY choose\n   not do do this if they are no longer accepting direct subscriptions but MUST\n   always return at least one Hub URL, referring to a Hub that they are\n   actively distributing content to.\n\n5. __Publishers Fall Back:__ Relay Publishers MAY OPTIONALLY provide the other\n   methods methods of discovery refereed to in the PuSH 0.3 and PuSH 0.4\n   specification. However this is NOT REQUIRED to support Relay and should only\n   be considered for supporting PuSH 0.3 Subscribers.\n\n6. __Subscriber Fall Back:__ Relay Subscribers MAY OPTIONALLY fall back to\n   alternative methods of discovery. However this is NOT REQUIRED to support\n   Relay or PuSH 0.4 Publishers and should only be considered for\n   supporting PuSH 0.3 Publishers.\n\n\n<!-- Long Spec START -->\n#### Examples (Non-normative)\n\n![Relay_Discovery](Relay_Discovery.png)\n\n![Req](Relay_req.png) Subscriber makes a GET or HEAD request to Publisher for a topic.\n    \n    HEAD <requested_topic_url> HTTP/1.1\n    Host: <hostname.com>\n\n![Res](Relay_res.png) Publisher responds to Subscriber with suitable headers. (If it were \na GET request the Publisher MAY also include a recent version of the the top few Entries \nin the Topic.)\n\n    HTTP/1.1 200 OK\n    Content-Type: text/xml; charset=utf-8\n    Content-Length: length\n    Link: <advertised_hub_url>; rel=hub, <advertised_topic_url>; rel=self\n\n\n#### Reference Implementation\n\n__requested_topic_url & advertised_topic_url:__ \n\nMAY be any URL \n\n    [https|http]://<domain>/path\n\ne.g.\n\n    https://example.com/content_feeds/breaking_news\n\n\n__advertised_hub_url:__ \n\nThe hub url SHOULD end with `/relay/hub`\n\n    [https|http]://<hub_domain>/relay/hub\n\ne.g.\n\n    https://example.com/relay/hub\n    \n\n<!-- Long Spec END -->\n\n\n<br/>\n<a name=\"5.\"></a>\n************************************************************************************************************************\n5. Subscribing and Unsubscribing\n------------------------------------------------------------------------------------------------------------------------\n<!-- Long Spec START -->\n#### PuSH Specification\n\n![66](66.png)\n> 5\\. Subscribing and Unsubscribing\n\n> Subscribing to a topic URL consists of four parts that may occur immediately \n> in sequence or have a delay.\n\n> * Requesting a subscription using the hub\n> * Validating the subscription with the publisher (OPTIONAL)\n> * Confirming the subscription was actually desired by the subscriber\n> * Periodically reconfirming the subscription is still active (OPTIONAL)\n\n> Unsubscribing works in the same way, except with a single parameter changed \n> to indicate the desire to unsubscribe. Also, the Hub will not validate \n> unsubscription requests with the publisher.\n\n![99](99.png)\n\n#### Relay Specification\n<!-- Long Spec END -->\n\n1. Adhere to section 5. \"Subscribing and Unsubscribing\" in the PuSH 0.4 specification\n\n2. (non-normative) Sections 5.1, 5.2, 5.3 and 5.4 in this specification map\n   to the four bullets in section 5 of the PuSH 0.4 specification. Sections 5.1, 5.2,\n   5.3 in this specification relate to sections of the same numbers in the PuSH 0.4\n   specification. Section 5.4 in this specification describes subscription renewal / reconfirmation, \n   which is mentioned in various places in the PuSH 0.4 specification. Section 5.5 \n   in this specification describes subscription\n   denying, which is referred to in section 5.2 of the PuSH 0.4 specification.\n\n\n<br/>\n<a name=\"5.1.\"></a>\n************************************************************************************************************************\n### 5.1. Subscription Request\n\n_The Subscriber sends a Subscription Request to a Hub_\n\n<!-- Long Spec START -->\n#### PuSH Specification\n\n![66](66.png)\n> 5\\.1\\.  Subscriber Sends Subscription Request\n>\n> Subscription is initiated by the subscriber making an HTTPS [RFC2616] or\n> HTTP [RFC2616] POST request to the hub URL. This request has a Content-Type\n> of application/x-www-form-urlencoded (described in Section 17.13.4 of\n> [W3C.REC‑html401‑19991224]) and the following parameters in its body:\n>\n> * __hub.callback__ REQUIRED. The subscriber's callback URL where\n>   notifications should be delivered. It is considered good practice to use a\n>   unique callback URL for each subscription.\n> * __hub.mode__ REQUIRED. The literal string \"subscribe\" or \"unsubscribe\",\n>   depending on the goal of the request.\n> * __hub.topic__ REQUIRED. The topic URL that the subscriber wishes to\n>   subscribe to or unsubscribe from.\n> * __hub.lease_seconds__ OPTIONAL. Number of seconds for which the subscriber\n>   would like to have the subscription active. Hubs MAY choose to respect\n>   this value or not, depending on their own policies. This parameter MAY be\n>   present for unsubscription requests and MUST be ignored by the hub in that\n>   case.\n> * __hub.secret__ OPTIONAL. A subscriber-provided secret string that will be\n>   used to compute an HMAC digest for authorized content distribution. If not\n>   supplied, the HMAC digest will not be present for content distribution\n>   requests. This parameter SHOULD only be specified when the request was\n>   made over HTTPS [RFC2818]. This parameter MUST be less than 200 bytes in\n>   length.\n>\n> Subscribers MAY also include additional HTTP [RFC2616] request parameters, as\n> well as HTTP [RFC2616] Headers if they are required by the hub. In the\n> context of social web applications, it is considered good practice to include\n> a From HTTP [RFC2616] header (as described in section 14.22 of Hypertext\n> Transfer Protocol [RFC2616]) to indicate on behalf of which user the\n> subscription is being performed.\n> \n> Hubs MUST ignore additional request parameters they do not understand.\n>\n> Hubs MUST allow subscribers to re-request subscriptions that are already\n> activated. Each subsequent request to a hub to subscribe or unsubscribe MUST\n> override the previous subscription state for a specific topic URL and\n> callback URL combination once the action is verified. Any failures to\n> confirm the subscription action MUST leave the subscription state unchanged.\n> This is required so subscribers can renew their subscriptions before the\n> lease seconds period is over without any interruption.\n>\n> 5\\.1\\.1\\.  Subscription Parameter Details\n> \n> The topic and callback URLs MAY use HTTP [RFC2616] or HTTPS [RFC2818]\n> schemes. The topic URL MUST be the one advertised by the publisher in a Self\n> Link Header during the discovery phase. (See Section 4). Hubs MAY refuse\n> subscriptions if the topic URL does not correspond to the one advertised by\n> the publisher. The topic URL can otherwise be free-form following the URI\n> spec [RFC3986]. Hubs MUST always decode non-reserved characters for these\n> URL parameters; see section 2.4 on \"When to Encode or Decode\" in the URI\n> spec [RFC3986].\n>\n> The callback URL MAY contain arbitrary query string parameters (e.g.,\n> ?foo=bar&red=fish). Hubs MUST preserve the query string during subscription\n> verification by appending new parameters to the end of the list using the &\n> (ampersand) character to join. Existing parameters with names that overlap\n> with those used by verification requests will not be overwritten. For event\n> notification, the callback URL will be POSTed to including any query-string\n> parameters in the URL portion of the request, not as POST body parameters.\n>\n> 5\\.1\\.2\\.  Subscription Response Details\n>\n> The hub MUST respond to a subscription request with an HTTP [RFC2616] 202\n> \"Accepted\" response to indicate that the request was received and will now\n> be verified (Section 5.3) and validated (Section 5.2) by the hub. The hub\n> SHOULD perform the verification and validation of intent as soon as\n> possible.\n>\n> If a hub finds any errors in the subscription request, an appropriate HTTP\n> [RFC2616] error response code (4xx or 5xx) MUST be returned. In the event of\n> an error, hubs SHOULD return a description of the error in the response body\n> as plain text. Hubs MAY decide to reject some callback URLs or topic URLs\n> based on their own policies (e.g., domain authorization, topic URL port\n> numbers).\n\n![99](99.png)\n\n#### Relay Specification\n<!-- Long Spec END -->\n\n1. Adhere to sections 5.1, 5.1.1 and 5.1.2 \"Subscriber \n   Sends Subscription Request\" in the PuSH v0.4 specification.\n\n2. The topic URL (hub.topic) MUST be the advertised_topic_url as defined in \n   section 4 paragraph 2 of this specification. The hub URL mus\n\n3. A well formed subscription request MUST:\n    * hub.callback is present and is a valid URL \n    * hub.mode is present and is either \"subscribe\" or \"unsubscribe\". If it is\n      \"unsubscribe\" the Hub MUST have an existing subscription for the given tuple \n      {hub.topic, hub.callback}.\n    * advertised_topic_url is present and is one the Hub is willing to distribute. \n      This means the Hub is either already subscribing to this topic or the Hub\n      is willing to \"auto subscribe\" and set up a new subscription to this\n      topic.\n\n<!-- Long Spec START -->\n<a name=\"5.1.examples\"></a>\n#### Examples\n\n![Relay_Subscribe](Relay_Subscribe.png)\n\n![Req](Relay_req.png) Subscriber makes a POST request to the Publisher's hub URL.\n\n    POST <advertised_hub_url> HTTP/1.1\n    Content-Type: application/x-www-form-urlencoded\n\n    hub.callback=<subscriber_callback_url>&hub.mode=subscribe&hub.topic=\n      <advertised_topic_url>&hub.lease_seconds=<lease_seconds>&hub.secret=<secret>\n\n![Res](Relay_res.png) Publisher response (success):\n\n    HTTP/1.1 202 Accepted\n\n![Res](Relay_res.png) Publisher response (failure):\n\n    HTTP/1.1 400 Bad Request\n\nThis is an example and error codes could be any 4xx or 5xx.\n\n\n#### Reference Implementation\n\n__subscriber_callback_url:__ \n\nThe subscriber callback url is under `/relay/callback/`\n\n    [https|http]://<subscriber_domain>/relay/callback/<unique_string>\n\nWhere `unique_string` is a string that is unique to the subscriber domain. 200\ncharacters long and alphanumeric only.\n\ne.g.\n\n    https://example.com/relay/callback/1234567890AbCdEfGhIj1234567890AbCdEfGh\n       Ij1234567890AbCdEfGhIj1234567890AbCdEfGhIj1234567890AbCdEfGhIj\n    \n\n<!-- Long Spec END -->\n\n<br/>\n<a name=\"5.2.\"></a>\n************************************************************************************************************************\n### 5.2. Subscription Validation \n\n_The Hub validates the Subscription Request_\n\n<!-- Long Spec START -->\n#### PuSH Specification\n\n![66](66.png) \n\n> 5\\.2\\.  Subscription Validation\n>\n> Subscriptions MAY be validated by the Hubs who may require more details to\n> accept or refuse a subscription. The Hub MAY also check with the publisher\n> whether the subscription should be accepted.\n>\n> If (and when), the subscription is accepted, the hub MUST perform the\n> verification of intent of the subscriber.\n>\n> If (and when), the subscription is denied, the hub MUST inform the\n> subscriber by sending an HTTP [RFC2616] GET request to the subscriber's\n> callback URL as given in the subscription request. This request has the\n> following query string arguments appended (format described in Section\n> 17.13.4 of [W3C.REC‑html401‑19991224]):\n>\n> * __hub.mode__ REQUIRED. The literal string \"denied\".\n> * __hub.topic__ REQUIRED. The topic URL given in the corresponding \n>   subscription request.\n> * __hub.reason__ OPTIONAL. The hub may include a reason for which the \n>   subscription has been denied.\n>\n> Hubs may provide an additional HTTP [RFC2616] Location header (as described\n> in section 14.30 of Hypertext Transfer Protocol [RFC2616]) to indicate that\n> the subscriber may retry subscribing to a different hub.topic. This allows\n> for limited distribution to specific groups or users in the context of\n> social web applications.\n>\n> The subscription MAY be denied by the hub at any point (even if it was\n> previously accepted). The Subscriber SHOULD then consider that the\n> subscription is not possible anymore.\n\n![99](99.png)\n\n#### Relay Specification\n<!-- Long Spec END -->\n\n1. Adhere to section 5.2 \"Subscription Validation\" in the PuSH v0.4 specification.\n\n2. Validation SHOULD include the hub checking the subscription request is well \n   formed as defined in section 5.1 point 3 in this specification.\n\n3. Validation MAY include ensuring the subscriber or publisher have not \n   been blacklisted and the Hub is \"willing\" to maintain the new subscription\n   that is being requested.\n\n4. The Hub MAY integrate with the original Publisher for further validation of \n   the subscription. This specification does not recommend how that is done but\n   an approach may be specified in a suitable a relay extension. (However it \n   is worth noting that after a Publisher distributes content to a Hub is \n   technically cannot mandate what the Hub does with that content afterwards.\n   Fair use or contractual policies may go some way to addressing this but \n   Publishers should only distribute content to Hubs that they trust.)\n\n\n\n<!-- Long Spec START -->\n#### Examples\n\n![Relay_Validate](Relay_Validate.png)\n\nIf validation fails the hub MUST inform the subscriber that the subscription\nhas been denied. See section 5.5 of this specification.\n\n<!-- Long Spec END -->\n\n\n<br/>\n<a name=\"5.3.\"></a>\n************************************************************************************************************************\n### 5\\.3\\. Subscriber Verification\n\n_The Publisher verifies the intent of the Subscriber_\n\n<!-- Long Spec START -->\n#### PuSH Specification\n\n![66](66.png)\n> 5\\.3\\.  Hub Verifies Intent of the Subscriber\n>\n> In order to prevent an attacker from creating unwanted subscriptions on\n> behalf of a subscriber (or unsubscribing desired ones), a hub must ensure\n> that the subscriber did indeed send the subscription request.\n>\n> The hub verifies a subscription request by sending an HTTP [RFC2616] GET\n> request to the subscriber's callback URL as given in the subscription\n> request. This request has the following query string arguments appended\n> (format described in Section 17.13.4 of [W3C.REC‑html401‑19991224]):\n>\n> * __hub.mode__ REQUIRED. The literal string \"subscribe\" or \"unsubscribe\",\n>   which matches the original request to the hub from the subscriber.\n> * __hub.topic__ REQUIRED. The topic URL given in the corresponding subscription\n>   request.\n> * __hub.challenge__ REQUIRED. A hub-generated, random string that MUST be echoed\n>   by the subscriber to verify the subscription.\n> * __hub.lease_seconds__ REQUIRED/OPTIONAL. The hub-determined number of seconds\n>   that the subscription will stay active before expiring, measured from the\n>   time the verification request was made from the hub to the subscriber. Hubs\n>   MUST supply this parameter for subscription requests. This parameter MAY be\n>   present for unsubscribe requests and MUST be ignored by subscribers during\n>   unsubscription.\n>\n> 5\\.3\\.1\\.  Verification Details\n>\n> The subscriber MUST confirm that the hub.topic corresponds to a pending\n> subscription or unsubscription that it wishes to carry out. If so, the\n> subscriber MUST respond with an HTTP success (2xx) code with a response body\n> equal to the hub.challenge parameter. If the subscriber does not agree with\n> the action, the subscriber MUST respond with a 404 \"Not Found\" response.\n>\n> The hub MUST consider other server response codes (3xx, 4xx, 5xx) to mean\n> that the verification request has failed. If the subscriber returns an HTTP\n> [RFC2616] success (2xx) but the content body does not match the\n> hub.challenge parameter, the hub MUST also consider verification to have\n> failed.\n>\n> Hubs MAY make the hub.lease_seconds equal to the value the subscriber passed\n> in their subscription request but MAY change the value depending on the\n> hub's policies. To sustain a subscription, the subscriber MUST re-request\n> the subscription on the hub before hub.lease_seconds seconds has elapsed.\n\n![99](99.png)\n\n#### Relay Specification\n<!-- Long Spec END -->\n\n(Meets the PuSH Specification)\n\n<!-- Long Spec START -->\n#### Examples\n![Relay_Verify](Relay_Verify.png)\n\n![Req](Relay_req.png) Hub makes a GET request to the Subscribers's callback URL.\n\n    GET <subscriber_callback_url>?hub.mode=subscribe&hub.topic=<advertised_topic_url>&hub\n      .challenge=<challenge_string>&hub.lease_seconds=604800 HTTP/1.1\n\n![Res](Relay_res.png) Subscriber response (success):\n\n    HTTP/1.1 200 OK\n\n    <challenge_string>\n\n![Res](Relay_res.png) Subscriber response (failiure):\n\n    HTTP/1.1 404 Not Found\n<!-- Long Spec END -->\n\n<br/>\n<a name=\"5.4.\"></a>\n************************************************************************************************************************\n### 5.4. Subscription Renewal\n\n3.  Subscriber is given a number of `lease_seconds` and MUST resubscribe before\n   these have elapsed.\n\n<br/>\n<a name=\"5.5.\"></a>\n************************************************************************************************************************\n### 5.5. Subscription Denial\n\n_Hub informs the Subscriber when a subscription is denied_\n\n<!-- Long Spec START -->\n#### Relay Specification\n<!-- Long Spec END -->\n\n(Meets the PuSH Specification, see section 5.2 in the PuSH 0.4 specification)\n\n<!-- Long Spec START -->\n#### Examples\n![Relay_Verify](Relay_Verify.png)\n\n![Req](Relay_req.png) Hub makes a GET request to the Subscriber's callback \nURL.\n\n    GET <subscriber_callback_url>?hub.mode=denied&hub.topic=<topic_url>&hub.\n      reason=<reason> HTTP/1.1\n\n![Res](Relay_res.png) Subscriber response:\n\n    HTTP/1.1 200 OK\n\nThe specification does not specify what the subscriber response should be. It\nSHOULD be assumed the Subscriber can return any response and the Publisher\nwill ignore it.\n\n<!-- Long Spec END -->\n\n<br/>\n<a name=\"6.\"></a>\n************************************************************************************************************************\n6. Publishing\n------------------------------------------------------------------------------------------------------------------------\n_The Publisher sends updates to it's Hubs and any other Subscribers_\n\n<!-- Long Spec START -->\n#### PuSH Specification\n\n![66](66.png)\n> 6\\.  Publishing\n>\n> The publisher MUST inform the hubs it previously designated when a topic has\n> been updated. The hub and the publisher can agree on any mechanism, as long\n> as the hub is eventually able send the updated payload to the subscribers.\n\n![99](99.png)\n\n#### Relay Specification\n<!-- Long Spec END -->\n\n(Meets and Extends the PuSH specification.)\n(_Compatible with the PusH spec part 3, 1st bullet.\nDifferent to part 3, 3rd bullet, but that's fine as per part 6_)\n\n<!-- Long Spec START -->\n![Relay_Publish](Relay_Publish.png)\n\nPuSH leaves it open as to how a Publisher sends content to a Hub. With Relay\nPublishers and Hubs both send tehir content to their Subscribers in an\nidentical way - see Content Distribution.\n<!-- Long Spec END -->\n\n\n<br/><br/><a name=\"7.\"></a>\n************************************************************************************************************************\n7. Content Distribution\n------------------------------------------------------------------------------------------------------------------------\n\n_Hub sends updates to Subscribers and any other Hubs_\n\n<!-- Long Spec START -->\n#### PuSH Specification\n\n![66](66.png) \n> 7\\.  Content Distribution\n>\n> A content distribution request is an HTTP [RFC2616] POST request from hub to\n> the subscriber's callback URL with the payload of the notification. This\n> request MUST have a Content-Type corresponding to the type of the topic. The\n> hub MAY reduce the payload to a diff between two consecutive versions if its\n> format allows it.\n> \n> The request MUST include a Link Header [RFC5988] with rel=hub pointing to\n> the Hub as well as a Link Header [RFC5988] with rel=self set to the topic\n> that's being updated. The Hub SHOULD combine both headers into a single Link\n> Header [RFC5988].\n> \n> The successful response from the subscriber's callback URL MUST be an HTTP\n> [RFC2616] success (2xx) code. The hub MUST consider all other subscriber\n> response codes as failures; that means subscribers MUST NOT use HTTP\n> redirects for moving subscriptions. The response body from the subscriber\n> MUST be ignored by the hub. Hubs SHOULD retry notifications repeatedly until\n> successful (up to some reasonable maximum over a reasonable time period).\n> Subscribers SHOULD respond to notifications as quickly as possible; their\n> success response code SHOULD only indicate receipt of the message, not\n> acknowledgment that it was successfully processed by the subscriber.\n\n![99](99.png)\n\n#### Relay Specification\n<!-- Long Spec END -->\n\n(Meets and Extends the PuSH specification.)\n\n\n\n<!-- Long Spec START -->\n#### Examples\n\n![Relay_Distribute](Relay_Distribute.png)\n\nPublisher Request:\n\n    POST <subscriber_callback_url> HTTP/1.1\n    Content-Type: <topic_content_type>\n    Link: <hub_url>; rel=hub, <topic_url>; rel=self\n\nSubscriber Response (sucess):\n\n    HTTP/1.1 200 OK\n<!-- Long Spec END -->\n\n\n<br/><br/><a name=\"8.\"></a>\n************************************************************************************************************************\n8. Authenticated Content Distribution\n------------------------------------------------------------------------------------------------------------------------\n<!-- Long Spec START -->\n#### PuSH Specification\n\n![66](66.png) \n> 8\\.  Authenticated Content Distribution\n>\n> If the subscriber supplied a value for hub.secret in their subscription\n> request, the hub MUST generate an HMAC signature of the payload and include\n> that signature in the request headers of the content distribution request.\n> The X-Hub-Signature header's value MUST be in the form sha1=signature where\n> signature is a 40-byte, hexadecimal representation of a SHA1 signature\n> [RFC3174]. The signature MUST be computed using the HMAC algorithm [RFC2104]\n> with the request body as the data and the hub.secret as the key.\n>\n> When subscribers receive a content distribution request with the X-Hub-\n> Signature header specified, they SHOULD recompute the SHA1 signature with\n> the shared secret using the same method as the hub. If the signature does\n> not match, subscribers MUST still return a 2xx success response to\n> acknowledge receipt, but locally ignore the message as invalid. Using this\n> technique along with HTTPS [RFC2818] for subscription requests enables\n> simple subscribers to receive authenticated notifications from hubs without\n> the need for subscribers to run an HTTPS [RFC2818] server.\n>\n> Please note however that this signature only ensures that the payload was\n> not forged. Since the notification also includes headers, these should not\n> be considered as safe by the subscriber, unless of course the subscriber\n> uses HTTPS [RFC2818] callbacks.\n\n![66](66.png) \n\n#### Relay Specification\n<!-- Long Spec END -->\n\nTODO\n\n\n\n************************************************************************************************************************\nReferences\n------------------------------------------------------------------------------------------------------------------------\n\n* [PubSubHubbub Core 0.4 -- Working Draft]\n  (https://pubsubhubbub.googlecode.com/git/pubsubhubbub-core-0.4.html)\n* RFC4287  Nottingham, M., Ed. and R. Sayre, Ed., [The Atom Syndication Format]\n  (http://www.ietf.org/rfc/rfc4287.txt)\n\n\n\n\n\n\n\n\n\n\n\n\nKey Technology Integration Work TODO for Sub Bets\n\n\nRegistration (BV + CMP)\n- BV hand unregistered users to CMp for Light Registration.\n- CMP + ACS create the user, start session, drop cookies etc and then redirect the user back to BV.\n- BV may at some stage later in the journey ask for extra information from the user.\n- BV will need two things from CMP\n  1. A way to get a users personal details from CMP to pre-populate the BV registration with any detail the user has previously given to CMP\n  2. An API to indicate to CMP that the user has \"activated\" their BV site.\n? (Are there any Know Your Customer regulations here)\n\nMy Account Page (BV + CMP)\n- CMP will host the central My Account page as normal\n- BV will host their own My Account Page which must\n  1. have the same template, especially headers at the top of the page, as the main my account page\n  2. pull in the tabs to show for the user dynamically from CMP - e.g. with client side DOM injection (so as to only show the tabs relevant to that user AND show the same tabs as the central My Account page)\n\nAccess Control (BV + ACS)\n- Just need to configure new domains etc for ACS.\n- Bet Victor will do it's own Access Control (e.g. not use your Akamai).\n\nContent Feeds (BV + 3rd party)\n- Opta widget integrated into BV front end (to be done from Opta browser side)\n- Racing date (PA and timeform) BV already have a backend integration for this.\n- TV schedules (TBC how this will be done...)\n\nArticles (BV + News UK)\n- Articles will be editorial created in Escenic\n- Search: Require a Content API for BV to call News UK to get \"all articles that match a metadata search\". (BV will call our API server-server and then render it in to HTML before delivering it to the browser.)\n- TBC how this metadata is put in to the CMS and can be tagged against the tip.\n- Retrieve: An API for BV to get a full article.\n\nTips (BV + News UK)\n- BV will pull tips into three places: (e.g. Templegate or Claude Duval)\n  1. An index page that contains all the tips for a given day.\n  2. Next to any horse that has been tipped.\n  3. Into any race that contains a tipped horse.\n- Tips therefore need to be associated to the tip to the horse id, the course, the date and time, the competition id (the race), the tipster. \n- TBC how this metadata is put in to the CMS and can be tagged against the tip.\n- Assumption is that these tips are created in escenic but this has not bee finalised.\n\nSun Racing \n- A separate site from the BV site.\n- Won't be bet driven but will include much of the same content that BV includes (tips, articles, race cards, race caller, nag me etc).\n- TBC who is building this.\n\nAdvertising\n- Injecting betting Ads into various sites (e.g. the main sun site or the Sun racing site).\n- Needs to get the latest odds from BV.\n\nMobile Apps\n- For Sun Bets and Sun Racing (both be web driven and mobile responsive).\n- This opens up the opportunity for push notifications.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n",
+			"file": "spec/relay-specification.md",
+			"file_size": 33993,
+			"file_write_time": 1383814536000000,
+			"settings":
+			{
+				"buffer_size": 36934,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "nodejs/node_modules/mocha/mocha.js",
+			"settings":
+			{
+				"buffer_size": 116017,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "nodejs/app.js",
+			"settings":
+			{
+				"buffer_size": 1212,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "nodejs/node_modules/superagent/docs/index.md",
+			"settings":
+			{
+				"buffer_size": 6860,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"command_palette":
+	{
+		"height": 27.0,
+		"selected_items":
+		[
+			[
+				"mark",
+				"Markdown Preview: Python Markdown: Preview in Browser"
+			],
+			[
+				"preview",
+				"Markdown Preview: Python Markdown: Preview in Browser"
+			],
+			[
+				"mar",
+				"Set Syntax: Markdown Extended"
+			],
+			[
+				"ma",
+				"Markdown Preview: Python Markdown: Preview in Browser"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"pa",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 647.0
+	},
+	"console":
+	{
+		"height": 0.0
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/Users/agriffiths/Library/Application Support/Sublime Text 2/Packages/Default/Default (OSX).sublime-keymap",
+		"/Users/agriffiths/Documents/gitprojects/relay/nodejs/node_modules/superagent/Makefile",
+		"/Users/agriffiths/Documents/gitprojects/relay/nodejs/lib/relay/tests.js",
+		"/Users/agriffiths/Documents/gitprojects/relay/nodejs/node_modules/superagent/Readme.md",
+		"/Users/agriffiths/Documents/gitprojects/relay/nodejs/package.json",
+		"/Users/agriffiths/Documents/gitprojects/relay/nodejs/tests/test.js",
+		"/Users/agriffiths/Documents/gitprojects/relay/nodejs/node_modules/mocha/lib/test.js",
+		"/Users/agriffiths/Documents/gitprojects/relay/nodejs/app.js",
+		"/Users/agriffiths/Documents/gitprojects/relay/nodejs/node_modules/mocha/Readme.md",
+		"/Users/agriffiths/Documents/gitprojects/relay/spec/parse.js",
+		"/Users/agriffiths/Documents/gitprojects/relay/spec/relay-specification.md",
+		"/Users/agriffiths/Documents/gitprojects/relay/spec/relay-extensions.md",
+		"/Users/agriffiths/Documents/gitprojects/relay/nodejs/lib/relay/index.js",
+		"/Users/agriffiths/Documents/gitprojects/relay/nodejs/testapp.js",
+		"/Users/agriffiths/Documents/gitprojects/relay/nodejs/lib/relay/relay.js",
+		"/Users/agriffiths/Documents/gitprojects/relay/nodejs/lib/relay/publisher.js",
+		"/Users/agriffiths/Documents/gitprojects/relay/nodejs/lib/relay/topic.js",
+		"/Users/agriffiths/Documents/gitprojects/relay/nodejs/routes/index.js",
+		"/Users/agriffiths/Documents/gitprojects/relay/nodejs/routes/relay.js",
+		"/Users/agriffiths/Documents/gitprojects/relay/nodejs/apps/relayWebAPI.js",
+		"/Users/agriffiths/Library/Application Support/Sublime Text 2/Packages/Default/Preferences.sublime-settings",
+		"/Users/agriffiths/Documents/gitprojects/relay/nodejs/routes/user.js",
+		"/Users/adam/Documents/gitprojects/relay/spec/README.md",
+		"/Users/adam/Library/Application Support/Sublime Text 2/Packages/Default/Preferences.sublime-settings",
+		"/Users/adam/Library/Application Support/Sublime Text 2/Packages/Default/Default (OSX).sublime-keymap",
+		"/Users/adam/Documents/gitprojects/relay/README.md",
+		"/Users/adam/Documents/gitprojects/relay/spec/SubscriptionForm.html",
+		"/Users/adam/Documents/gitprojects/relay/spec/API Signing.md",
+		"/Users/adam/Documents/gitprojects/relay/nodejs/README.md",
+		"/Users/adam/Documents/gitprojects/relay/spec/parse.js",
+		"/Users/adam/Documents/gitprojects/relay/.gitignore",
+		"/Users/adam/Documents/gitprojects/relay/java/README.md",
+		"/Users/adam/Documents/gitprojects/relay/spec/Relay_PuSH.png",
+		"/Users/adam/Documents/gitprojects/relay/app.js"
+	],
+	"find":
+	{
+		"height": 35.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+			"/Users/adam/Documents/gitprojects/relay"
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"section",
+			"advertised_hub_url",
+			"query-string",
+			"4006",
+			"console",
+			"body",
+			"header",
+			"test",
+			"40",
+			"5.1",
+			"subscription",
+			"discovered_hub_url",
+			"discovered_topic_url",
+			"returned_topic_url",
+			"+space",
+			"super+spa",
+			"<br/>\n<br/>",
+			"<br/>\\n<br/>",
+			"<br/><br/>",
+			"<br/>\n<br/>",
+			"66",
+			"<a id",
+			"atom",
+			"\n",
+			"Readme.md",
+			"Readme",
+			".next()",
+			"next()"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"advertised_hub_url",
+			"advertised_topic_url",
+			"discovered_topic_url",
+			"<br/>",
+			"<a name"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 5,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "nodejs/apps/relayWebAPI.js",
+					"settings":
+					{
+						"buffer_size": 3448,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2028,
+								2028
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 418.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "nodejs/lib/relay/index.js",
+					"settings":
+					{
+						"buffer_size": 5870,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1450,
+								1450
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 6.0,
+						"translation.y": 165.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "/Users/agriffiths/Library/Application Support/Sublime Text 2/Packages/User/Default (OSX).sublime-keymap",
+					"settings":
+					{
+						"buffer_size": 4,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1,
+								1
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JSON.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "nodejs/test/test.js",
+					"settings":
+					{
+						"buffer_size": 10757,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								9502,
+								9502
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1591.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "nodejs/routes/index.js",
+					"settings":
+					{
+						"buffer_size": 110,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "spec/relay-specification.md",
+					"settings":
+					{
+						"buffer_size": 36934,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								36914,
+								33984
+							]
+						],
+						"settings":
+						{
+							"spell_check": true,
+							"syntax": "Packages/Markdown/Markdown.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 12313.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "nodejs/node_modules/mocha/mocha.js",
+					"settings":
+					{
+						"buffer_size": 116017,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								634,
+								634
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 1.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "nodejs/app.js",
+					"settings":
+					{
+						"buffer_size": 1212,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1125,
+								1212
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 159.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "nodejs/node_modules/superagent/docs/index.md",
+					"settings":
+					{
+						"buffer_size": 6860,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								5577,
+								5585
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Markdown/Markdown.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 0.0
+	},
+	"input":
+	{
+		"height": 31.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"replace":
+	{
+		"height": 64.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 260.0,
+	"status_bar_visible": true
+}
