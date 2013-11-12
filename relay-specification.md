@@ -10,7 +10,8 @@ _Publish. Subscribe. Syndicate._
 Core specification
 ------------------
 
-* Relay - A protocol for syndicating content using a publish subscribe pattern.
+* Relay - a protocol for syndicating content following the publish subscribe 
+  pattern.
 * __Status:__ DRAFT
 * __Latest Published Version:__
     *  __Long Version:__ [https://github.com/aogriffiths/relay/blob/spec-published/relay-specification.md]
@@ -26,12 +27,13 @@ Core specification
 Long versions includes examples and useful extracts from the PubSubHubbub
 specification. Short versions omit these and other non-normative information.
 
-The Published versions are official approved releases of the specification. The Editor's Draft
-is the latest _work in progress_ version.
+The Published versions are official approved releases of the specification.
+The Editor's Draft is the latest _work in progress_ version.
 
-If you are implementing Relay or would find background and examples useful read
-the long versions. If you are only looking for the normative parts of the
-specifications or to see how simple the specification really is, read the short versions.
+If you are implementing Relay or would find background and examples useful
+read the long versions. If you are only looking for the normative parts of the
+specifications or to see how simple the specification really is, read the
+short versions.
 
 
 <br/>
@@ -39,8 +41,8 @@ specifications or to see how simple the specification really is, read the short 
 Abstract
 ------------------------------------------------------------------------------------------------------------------------
 
-This document specifies "Relay", a protocol for syndicating content following the 
-publish subscribe pattern.
+This document specifies "Relay" - a protocol for syndicating content following
+the publish subscribe pattern.
 
 
 
@@ -51,7 +53,9 @@ Introduction
 
 Relay is inspired by and compatible with PubSubHubbub (PuSH). It also has some
 additional features that you might find useful. Relay considers any server to
-be capable of being a Publisher, a Subscriber, a Hub or all three and content is effectively "_relayed_" from the Publisher to Subscribers (optionally) via one or more Hubs.
+be capable of being a Publisher, a Subscriber, a Hub or all three and content
+is effectively "_relayed_" from the Publisher to Subscribers (optionally) via
+one or more Hubs.
 
 <!-- Long Spec START -->
 What does this mean? A picture is worth a thousand words:
@@ -67,9 +71,9 @@ Hub sends content to a Subscriber. The benefits are:
 * __Simplicity:__ All content is send between Publishers, Subscribers and Hubs 
   using the same protocol.
 * __Compatibility:__ Relay is compatible with PuSH v0.4.
-* __Relaying:__ A chain of Hubs can be created for "_relaying_" content. (This can be 
-  useful for distributing load or moving content from within a private network, using a private Hub, 
-  to the public Internet, using a public Hub.)
+*  __Relaying:__ A chain of Hubs can be created for "_relaying_" content. (This
+  can be  useful for distributing load or moving content from within a private
+  network, using a private Hub,  to the public Internet, using a public Hub.)
 
 
 
@@ -83,7 +87,10 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
 "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
 interpreted as described in [RFC2119](http://www.ietf.org/rfc/rfc2119.txt).
 
-
+Normative sections of this document are prescriptive parts of the specification.
+Informative sections are non-normative and although not part of the formal
+specification they do provide additional useful information (e.g. introduction,
+fragments of other specifications and examples.)
 
 <br/>
 <a name="2."></a>
@@ -91,7 +98,8 @@ interpreted as described in [RFC2119](http://www.ietf.org/rfc/rfc2119.txt).
 2. Definitions
 ------------------------------------------------------------------------------------------------------------------------
 
-### Specific Definitions
+### Specific Definitions 
+##### Normative:
 
 * __PuSH:__ When the word "push" is capitalised as "PuSH" it refers to
   PubSubHubbub, and unless otherwise specified, version 0.4.
@@ -115,29 +123,31 @@ interpreted as described in [RFC2119](http://www.ietf.org/rfc/rfc2119.txt).
 * __Hub:__ An entity that both subscribers to a Topic and publishes it. A Hub
   re-publishes ("_relays_") a Topic.
 
-### General Concepts
+### General Concepts 
+##### Informative:
 
 * All Relay Publishers are their own Hubs. 
 * A Publisher follows the same approach to _publishing_ content as a Hub
-follows for _distributing_ it. PuSH uses "publishing" and "distributing" to
-refer to slightly different things but Relay seeks to make them the same
-thing.
-* Hubs subscribe to Publishers or other Hubs.
-* Subscribers subscribe to Hubs or Publishers.
+follows for _distributing_ it. (PuSH uses "_publishing_" and "_distributing_" to
+refer to slightly different things and allow them to use different protocols but
+with Relay they use the same protocol.)
+* Hubs subscribe to Publishers or to other Hubs.
+* Subscribers subscribe to Hubs or to Publishers.
 
 
 <br/>
 <a name="3."></a>
 ************************************************************************************************************************
-3. High-level protocol flow
+3. High-level protocol flow 
 ------------------------------------------------------------------------------------------------------------------------
+##### Informative:
 
 The protocol for Relay following the protocol PuSH and is outlined in sections
 4 to 7 of this specification.
 
-<!-- Long Spec START --> 
-The following information is non-normative but serves
-as an overview of the protocol and index to sections 4 to 7 in this specification.
+<!-- Long Spec START -->  
+The following information is non-normative but serves as an overview of the
+protocol and index to sections 4 to 7 in this specification.
 
 * __[4. Discovery ](#4.)__ - A Subscriber discovers a Topic from a Publisher
   and how to subscribe to it.
@@ -148,15 +158,15 @@ as an overview of the protocol and index to sections 4 to 7 in this specificatio
       Subscription Request to a Hub. 
     * __[5.2. Subscription Validation ](#5.2.)__ - The Hub validates the 
       Subscription Request.
-    * __[5.3. Subscriber Verification ](#5.3.)__ - The Hub verifies the intent of
-      the Subscriber.
+    * __[5.3. Subscriber Verification ](#5.3.)__ - The Hub verifies the intent 
+      of the Subscriber.
     * __[5.4. Subscription Renewall](#5.4.)__ - The Hub periodically confirms 
       with the Subscriber to check if the subscription is still required.
-    * __[5.5. Subscription Denial ](#5.5.)__ - The Hub informs the Subscriber that
-      the subscription has been denied and is not (or no longer) active.
+    * __[5.5. Subscription Denial ](#5.5.)__ - The Hub informs the Subscriber 
+      that the subscription has been denied and is not (or no longer) active.
 
-* __[6. Publishing ](#6.)__ - Publishers POST any topic changes to their subscriber(s)
-  (which many be Hubs). 
+* __[6. Publishing ](#6.)__ - Publishers POST any topic changes to their 
+  subscriber(s) (which many be Hubs). 
 
 * __[7. Content Distribution ](#7.)__ - When Hubs receive
   POSTed Topic changes the POST them on to their subscriber(s), which many also
@@ -174,40 +184,17 @@ as an overview of the protocol and index to sections 4 to 7 in this specificatio
 ************************************************************************************************************************
 4. Discovery
 ------------------------------------------------------------------------------------------------------------------------
-_The Subscriber discovers from a Publisher the Hub(s) which it is publishing to._
 
 <!-- Long Spec START -->
 ![Relay_Discovery](Relay_Discovery.png)
 <!-- Long Spec END -->
 
+_The Subscriber discovers from a Publisher the Hub(s) which it is publishing to_
+
 <!-- Long Spec START -->
-#### PuSH Specification
-
-![66](66.png)
-> 4\. Discovery
-
-> A potential subscriber initiates discovery by retrieving (GET or HEAD
-> request) the topic to which it wants to subscribe. The HTTP [RFC2616]
-> response from the publisher MUST include at least one Link Header [RFC5988]
-> with rel=hub (a hub link header) as well as exactly one Link Header
-> [RFC5988] with rel=self (the self link header). The former MUST indicate the
-> exact URL of a PubSubHubbub hub designated by the publisher. If more than
-> one URL is specified, it is expected that the publisher pings each of these
-> URLs, so the subscriber may subscribe to one or more of these. The latter
-> will point to the permanent URL for the resource being polled.
-
-> In the absence of HTTP [RFC2616] Link headers, subscribers MAY fall back to
-> other methods to discover the hub(s) and the canonical URI of the topic. If
-> the topic is an XML based feed, it MAY use embedded link elements as
-> described in Appendix B of Web Linking [RFC5988]. Similarly, for HTML pages,
-> it MAY use embedded link elements as described in Appendix A of Web Linking
-> [RFC5988]. Finally, publishers MAY also use the Well-Known Uniform Resource
-> Identifiers [RFC5785] .host-meta to include the <Linkelement with rel="hub".
-
-![99](99.png)
-
 #### Relay Specification
 <!-- Long Spec END -->
+##### Normative:
 
 1. Adhere to section 4. "Discovery" in the PuSH v0.4 specification.
 
@@ -248,9 +235,36 @@ _The Subscriber discovers from a Publisher the Hub(s) which it is publishing to.
    Relay or PuSH 0.4 Publishers and should only be considered for
    supporting PuSH 0.3 Publishers.
 
-
 <!-- Long Spec START -->
-#### Examples (Non-normative)
+#### PuSH Specification
+##### Informative:
+
+![66](66.png)
+> 4\. Discovery
+
+> A potential subscriber initiates discovery by retrieving (GET or HEAD
+> request) the topic to which it wants to subscribe. The HTTP [RFC2616]
+> response from the publisher MUST include at least one Link Header [RFC5988]
+> with rel=hub (a hub link header) as well as exactly one Link Header
+> [RFC5988] with rel=self (the self link header). The former MUST indicate the
+> exact URL of a PubSubHubbub hub designated by the publisher. If more than
+> one URL is specified, it is expected that the publisher pings each of these
+> URLs, so the subscriber may subscribe to one or more of these. The latter
+> will point to the permanent URL for the resource being polled.
+
+> In the absence of HTTP [RFC2616] Link headers, subscribers MAY fall back to
+> other methods to discover the hub(s) and the canonical URI of the topic. If
+> the topic is an XML based feed, it MAY use embedded link elements as
+> described in Appendix B of Web Linking [RFC5988]. Similarly, for HTML pages,
+> it MAY use embedded link elements as described in Appendix A of Web Linking
+> [RFC5988]. Finally, publishers MAY also use the Well-Known Uniform Resource
+> Identifiers [RFC5785] .host-meta to include the <Linkelement with rel="hub".
+
+![99](99.png)
+
+
+#### Examples
+##### Informative:
 
 (See diagram above.)
 
@@ -270,6 +284,7 @@ in the Topic.)
 
 
 #### Reference Implementation
+##### Informative:
 
 __requested_topic_url & advertised_topic_url__ MAY be any URL:
 
@@ -297,8 +312,33 @@ e.g.
 ************************************************************************************************************************
 5. Subscribing and Unsubscribing
 ------------------------------------------------------------------------------------------------------------------------
+
+_The Subscriber subscribes to a Topic with the Hub_
+
 <!-- Long Spec START -->
+#### Relay Specification
+<!-- Long Spec END -->
+##### Normative:
+
+1. Adhere to section 5. "Subscribing and Unsubscribing" in the PuSH 0.4 specification
+
+<!-- Long Spec START -->
+##### Informative:
+
+The following references are useful if you wish to read the Relay specification
+in conjunction with the PuSH specification:
+
+   * Sections 5.1, 5.2, 5.3 and 5.4 map to the four bullets 
+     in section 5 in the PuSH 0.4 specification. 
+   * Sections 5.1, 5.2, 5.3 relate to sections of the same 
+     number in the PuSH 0.4 specification. 
+   * Section 5.4 describes subscription reconfirming / 
+     renewal, which is mentioned in various places in the PuSH 0.4 specification. 
+   * Section 5.5 describes subscription
+     denying, which is referred to in section 5.2 in the PuSH 0.4 specification.
+
 #### PuSH Specification
+##### Informative:
 
 ![66](66.png)
 > 5\. Subscribing and Unsubscribing
@@ -316,37 +356,50 @@ e.g.
 > unsubscription requests with the publisher.
 
 ![99](99.png)
-
-#### Relay Specification
 <!-- Long Spec END -->
-
-1. Adhere to section 5. "Subscribing and Unsubscribing" in the PuSH 0.4 specification
-
-2. (non-normative) The following notes are useful if you wish to read the Relay 
-   specification in conjunction with the PuSH specification:
-   * Sections 5.1, 5.2, 5.3 and 5.4 in this specification map to the four bullets in 
-     section 5 of the PuSH 0.4 specification. 
-   * Sections 5.1, 5.2, 5.3 in this specification relate to sections of the same 
-     numbers in the PuSH 0.4 specification. 
-   * Section 5.4 in this specification describes subscription reconfirming / renewal, 
-     of a subscription which is mentioned in various places in the PuSH 0.4 specification. 
-   * Section 5.5 in this specification describes subscription
-     denying, which is referred to in section 5.2 of the PuSH 0.4 specification.
-
 
 <br/>
 <a name="5.1."></a>
 ************************************************************************************************************************
 ### 5.1. Subscription Request
 
-_The Subscriber sends a Subscription Request to a Hub_
-
 <!-- Long Spec START -->
 ![Relay_Subscribe](Relay_Subscribe.png)
 <!-- Long Spec END -->
 
+_The Subscriber sends a Subscription Request to a Hub_
+
+<!-- Long Spec START -->
+#### Relay Specification
+<!-- Long Spec END -->
+##### Normative:
+
+1. Adhere to sections 5.1, 5.1.1 and 5.1.2 "Subscriber 
+   Sends Subscription Request" in the PuSH v0.4 specification.
+
+2. The topic URL (hub.topic) MUST be the advertised_topic_url as defined in 
+   [section 4 point 2](#4.2). The hub URL mus
+
+   TODO...
+
+3. <a name="5.1.3"></a>
+   A well formed subscription request MUST meet the following criteria:
+    * `hub.callback` is present and is a valid URL 
+    * `hub.mode` is present and is either "subscribe" or "unsubscribe". If it is
+        "unsubscribe" the Hub MUST have an existing subscription for the given tuple 
+        {hub.topic, hub.callback}.
+    * `hub.topic` is present and is one the Hub is able to distribute. 
+        This means the Hub is either already subscribing to this topic or the Hub
+        is willing to "auto subscribe" and set up a new subscription to this
+        topic.
+
+4. A well formed subscription request MAY meet the following criteria:
+    * `hub.lease_seconds` is present and is a number
+    * `hub.secret` is present and is alphanumeric
+
 <!-- Long Spec START -->
 #### PuSH Specification
+##### Informative:
 
 ![66](66.png)
 > 5\.1\.  Subscriber Sends Subscription Request
@@ -428,35 +481,9 @@ _The Subscriber sends a Subscription Request to a Hub_
 
 ![99](99.png)
 
-#### Relay Specification
-<!-- Long Spec END -->
-
-1. Adhere to sections 5.1, 5.1.1 and 5.1.2 "Subscriber 
-   Sends Subscription Request" in the PuSH v0.4 specification.
-
-2. The topic URL (hub.topic) MUST be the advertised_topic_url as defined in 
-   [section 4 point 2](#4.2) of this specification. The hub URL mus
-
-
-3. <a name="5.1.3"></a>
-   A well formed subscription request MUST meet the following criteria:
-    * `hub.callback` is present and is a valid URL 
-    * `hub.mode` is present and is either "subscribe" or "unsubscribe". If it is
-        "unsubscribe" the Hub MUST have an existing subscription for the given tuple 
-        {hub.topic, hub.callback}.
-    * `hub.topic` is present and is one the Hub is able to distribute. 
-        This means the Hub is either already subscribing to this topic or the Hub
-        is willing to "auto subscribe" and set up a new subscription to this
-        topic.
-
-4. A well formed subscription request MAY meet the following criteria:
-    * `hub.lease_seconds` is present and is a number
-    * `hub.secret` is present and is alphanumeric
-
-<!-- Long Spec START -->
-
 <a name="5.1.examples"></a>
 #### Examples
+##### Informative:
 
 (See diagram above.)
 
@@ -480,6 +507,7 @@ This is an example and error codes could be any 4xx or 5xx.
 
 
 #### Reference Implementation
+##### Informative:
 
 __subscriber_callback_url:__ 
 
@@ -504,14 +532,44 @@ e.g.
 ************************************************************************************************************************
 ### 5.2. Subscription Validation 
 
-_The Hub validates the Subscription Request_
-
 <!-- Long Spec START -->
 ![Relay_Validate](Relay_Validate.png)
 <!-- Long Spec END -->
 
+_The Hub validates the Subscription Request_
+
+<!-- Long Spec START -->
+#### Relay Specification
+<!-- Long Spec END -->
+##### Normative:
+
+1. Adhere to section 5.2 "Subscription Validation" in the PuSH v0.4 specification.
+
+2. Validation SHOULD include the hub checking the subscription request is well 
+   formed as defined in [section 5.1 point 3](#5.1.3) of this specification.
+
+3. Validation MAY include ensuring the subscriber or publisher have not 
+   been blacklisted and the Hub is "willing" to maintain the new subscription
+   that is being requested.
+
+4. If (and when) validation succeeds (the subscription is accepted) the hub MUST 
+   complete the Verification step. See [section 5.3](#5.3) of this specification.
+
+5. If (and when) validation fails (the subscription is denied) the hub MUST 
+   complete the Denial step. See [section 5.5](#5.5) of this specification.
+
+6. The Hub MAY integrate with the original Publisher for further validation of 
+   the subscription. This specification does not recommend how that is done but
+   an approach may be specified in a suitable a relay extension. (However it 
+   is worth noting that after a Publisher distributes content to a Hub is 
+   technically cannot mandate what the Hub does with that content afterwards.
+   Fair use or contractual policies may go some way to addressing this but 
+   Publishers should only distribute content to Hubs that they trust.)
+
+
 <!-- Long Spec START -->
 #### PuSH Specification
+##### Informative:
 
 ![66](66.png) 
 
@@ -548,42 +606,13 @@ _The Hub validates the Subscription Request_
 
 ![99](99.png)
 
-#### Relay Specification
-<!-- Long Spec END -->
-
-1. Adhere to section 5.2 "Subscription Validation" in the PuSH v0.4 specification.
-
-2. Validation SHOULD include the hub checking the subscription request is well 
-   formed as defined in [section 5.1 point 3](#5.1.3) of this specification.
-
-3. Validation MAY include ensuring the subscriber or publisher have not 
-   been blacklisted and the Hub is "willing" to maintain the new subscription
-   that is being requested.
-
-4. If (and when) validation succeeds (the subscription is accepted) the hub MUST 
-   complete the Verification step. See [section 5.3](#5.3) of this specification.
-
-5. If (and when) validation fails (the subscription is denied) the hub MUST 
-   complete the Denial step. See [section 5.5](#5.5) of this specification.
-
-6. The Hub MAY integrate with the original Publisher for further validation of 
-   the subscription. This specification does not recommend how that is done but
-   an approach may be specified in a suitable a relay extension. (However it 
-   is worth noting that after a Publisher distributes content to a Hub is 
-   technically cannot mandate what the Hub does with that content afterwards.
-   Fair use or contractual policies may go some way to addressing this but 
-   Publishers should only distribute content to Hubs that they trust.)
-
-
-<!-- Long Spec START -->
 #### Examples
-
-(See diagram above.)
+##### Informative:
 
 There are no specific http examples to provide here because the
 protocol which the Hub should use to integrate with the Publisher for Validation
 is not defined in this specification. The examples given in sections 5.1, 5.3 and 
-5.4 and 5.5 cover all communication between the Hub and the Subscriber.
+5.4 and 5.5 cover all http communication between the Hub and the Subscriber.
 
 
 <!-- Long Spec END -->
@@ -593,14 +622,23 @@ is not defined in this specification. The examples given in sections 5.1, 5.3 an
 ************************************************************************************************************************
 ### 5\.3\. Subscriber Verification
 
-_The Publisher verifies the intent of the Subscriber_
-
 <!-- Long Spec START -->
 ![Relay_Verify](Relay_Verify.png)
 <!-- Long Spec END -->
 
+_The Publisher verifies the intent of the Subscriber_
+
+<!-- Long Spec START -->
+#### Relay Specification
+<!-- Long Spec END -->
+##### Normative:
+
+1. Adhere to section 5.3 "Hub Verifies Intent of the Subscriber" in the PuSH 
+   v0.4 specification.
+
 <!-- Long Spec START -->
 #### PuSH Specification
+##### Informative:
 
 ![66](66.png)
 > 5\.3\.  Hub Verifies Intent of the Subscriber
@@ -648,13 +686,9 @@ _The Publisher verifies the intent of the Subscriber_
 
 ![99](99.png)
 
-#### Relay Specification
-<!-- Long Spec END -->
 
-1. Adhere to section 5.3 "Hub Verifies Intent of the Subscriber" in the PuSH v0.4 specification.
-
-<!-- Long Spec START -->
 #### Examples
+##### Informative:
 
 (See diagram above.)
 
@@ -695,17 +729,18 @@ _The Subscriber sends a Subscription Request to a Hub_
 ************************************************************************************************************************
 ### 5.5. Subscription Denial
 
-_Hub informs the Subscriber when a subscription is denied_
-
 <!-- Long Spec START -->
 ![Relay_Verify](Relay_Verify.png)
 <!-- Long Spec END -->
 
+_Hub informs the Subscriber when a subscription is denied_
+
 <!-- Long Spec START -->
 #### Relay Specification
 <!-- Long Spec END -->
+##### Normative:
 
-1. Adhere to section 5.2 "Subscription Validation" (third paragraph onwards) in the PuSH v0.4 specification.
+1. TODO
 
 <!-- Long Spec START -->
 #### Examples
@@ -733,14 +768,36 @@ will ignore it.
 ************************************************************************************************************************
 6. Publishing
 ------------------------------------------------------------------------------------------------------------------------
-_The Publisher sends updates to it's Hubs and any other Subscribers_
 
 <!-- Long Spec START -->
 ![Relay_Publish](Relay_Publish.png)
 <!-- Long Spec END -->
 
+_The Publisher sends updates to it's Hubs and any other Subscribers_
+
+<!-- Long Spec START -->
+#### Relay Specification
+<!-- Long Spec END -->
+##### Normative:
+
+1. Adhere to section 6 "Publishing" of the PuSH v0.4 specification.
+
+TODO 
+
+2. Adhere to section 3 "High-level protocol flow" in the PuSH v0.4 specification.
+   Specifically MUST adhere to the first bullet. MAY NOT adhere to the third bullet (
+   which is acceptable given section 6 "Publishing" in the PuSH v0.4 specification).
+
+TODO
+
+3. PuSH leaves it open as to how a Publisher sends content to a Hub. However with Relay
+   Publishers and Hubs MUST both send their content to their Subscribers in an
+   identical way. See section [5. Subscribing and Unsubscribing](#5.) and 
+   section [7. Content Distribution]#(7.) of this specification of how that is done.
+
 <!-- Long Spec START -->
 #### PuSH Specification
+##### Informative:
 
 ![66](66.png)
 > 6\.  Publishing
@@ -751,22 +808,8 @@ _The Publisher sends updates to it's Hubs and any other Subscribers_
 
 ![99](99.png)
 
-#### Relay Specification
-<!-- Long Spec END -->
-
-(Meets and Extends the PuSH specification.)
-(_Compatible with the PusH spec part 3, 1st bullet.
-Different to part 3, 3rd bullet, but that's fine as per part 6_)
-
-<!-- Long Spec START -->
-PuSH leaves it open as to how a Publisher sends content to a Hub. With Relay
-Publishers and Hubs both send tehir content to their Subscribers in an
-identical way - see Content Distribution.
-<!-- Long Spec END -->
-
-
-<!-- Long Spec START -->
 #### Examples
+##### Informative:
 
 (See diagram above.)
 <!-- Long Spec END -->
@@ -776,10 +819,23 @@ identical way - see Content Distribution.
 7. Content Distribution
 ------------------------------------------------------------------------------------------------------------------------
 
+<!-- Long Spec START -->
+TODO
+![Relay_Verify](Relay_Verify.png)
+<!-- Long Spec END -->
+
 _Hub sends updates to Subscribers and any other Hubs_
 
 <!-- Long Spec START -->
+#### Relay Specification
+<!-- Long Spec END -->
+##### Normative:
+
+1. Adhere to section 7 "Content Distribution" of the PuSH v0.4 specification.
+
+<!-- Long Spec START -->
 #### PuSH Specification
+##### Informative:
 
 ![66](66.png) 
 > 7\.  Content Distribution
@@ -807,15 +863,9 @@ _Hub sends updates to Subscribers and any other Hubs_
 
 ![99](99.png)
 
-#### Relay Specification
-<!-- Long Spec END -->
 
-(Meets and Extends the PuSH specification.)
-
-
-
-<!-- Long Spec START -->
 #### Examples
+##### Informative:
 
 ![Relay_Distribute](Relay_Distribute.png)
 
@@ -835,8 +885,19 @@ Subscriber Response (sucess):
 ************************************************************************************************************************
 8. Authenticated Content Distribution
 ------------------------------------------------------------------------------------------------------------------------
+
+_TODO_
+
+<!-- Long Spec START -->
+#### Relay Specification
+<!-- Long Spec END -->
+##### Normative:
+
+1. Adhere to section 8 "Authenticated Content Distribution" of the PuSH v0.4 specification.
+
 <!-- Long Spec START -->
 #### PuSH Specification
+##### Informative:
 
 ![66](66.png) 
 > 8\.  Authenticated Content Distribution
@@ -864,12 +925,7 @@ Subscriber Response (sucess):
 > uses HTTPS [RFC2818] callbacks.
 
 ![66](66.png) 
-
-#### Relay Specification
 <!-- Long Spec END -->
-
-TODO
-
 
 
 ************************************************************************************************************************
