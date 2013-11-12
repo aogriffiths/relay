@@ -10,18 +10,19 @@ _Publish. Subscribe. Syndicate._
 Core specification
 ------------------
 
-* Relay - a protocol for syndicating content following the publish subscribe 
-  pattern.
+Relay - a protocol for syndicating content following a publish / subscribe and
+webhook pattern.
+
 * __Status:__ DRAFT
 * __Latest Published Version:__
-    *  __Long Version:__ [https://github.com/aogriffiths/relay/blob/spec-published/relay-specification.md]
-    *  __Short Version:__ [https://github.com/aogriffiths/relay/blob/spec-published/relay-specification-short.md]
+    *  Long Version:  https://github.com/aogriffiths/relay/blob/spec-published/relay-specification.md
+    *  Short Version: https://github.com/aogriffiths/relay/blob/spec-published/relay-specification-short.md
 *  __Latest Editor's Draft:__
-    *  __Long Version:__ [https://github.com/aogriffiths/relay/blob/spec-master/relay-specification.md]
-    *  __Short Version:__ [https://github.com/aogriffiths/relay/blob/spec-master/relay-specification-short.md]
+    *  Long Version:  https://github.com/aogriffiths/relay/blob/spec-master/relay-specification.md
+    *  Short Version: https://github.com/aogriffiths/relay/blob/spec-master/relay-specification-short.md
 *  __Editor(s):__ 
     *  Adam Griffiths
-* __See Also:__ [https://github.com/aogriffiths/relay/blob/spec-master/README.md]
+* __See Also:__ https://github.com/aogriffiths/relay/blob/spec-master/README.md
 
 
 Long versions includes examples and useful extracts from the PubSubHubbub
@@ -41,8 +42,8 @@ short versions.
 Abstract
 ------------------------------------------------------------------------------------------------------------------------
 
-This document specifies "Relay" - a protocol for syndicating content following
-the publish subscribe pattern.
+This document specifies "Relay" - a protocol for syndicating content following a
+publish/subscribe and webhook pattern.
 
 
 
@@ -51,11 +52,10 @@ the publish subscribe pattern.
 Introduction
 ------------------------------------------------------------------------------------------------------------------------
 
-Relay is inspired by and compatible with PubSubHubbub (PuSH). It also has some
-additional features that you might find useful. Relay considers any server to
+Relay is inspired by and compatible with PubSubHubbub (PuSH). It also has 
+additional features that you might find useful. Relay promotes any server to
 be capable of being a Publisher, a Subscriber, a Hub or all three and content
-is effectively "_relayed_" from the Publisher to Subscribers (optionally) via
-one or more Hubs.
+is effectively "_relayed_" between them.
 
 <!-- Long Spec START -->
 What does this mean? A picture is worth a thousand words:
@@ -63,17 +63,17 @@ What does this mean? A picture is worth a thousand words:
 ![Relay_PuSH](Relay_PuSH.png)
 <!-- Long Spec END -->
 
-The main difference to PuSH is that Relay requires all Publishers publish 
-their content using exactly the same protocol as Hubs use to distribute content.  
-In other words a Publisher sends content to a Hub in exactly the same way as a 
-Hub sends content to a Subscriber. The benefits are:
+The main difference to PuSH is that Relay requires all Publishers publish their
+content using exactly the same protocol as Hubs use to distribute content. In
+other words a Publisher sends content to a Hub in exactly the same way as a Hub
+sends content to a Subscriber. The benefits are:
 
-* __Simplicity:__ All content is send between Publishers, Subscribers and Hubs 
+* __Simplicity:__ All content is sent between Publishers, Subscribers and Hubs 
   using the same protocol.
 * __Compatibility:__ Relay is compatible with PuSH v0.4.
-*  __Relaying:__ A chain of Hubs can be created for "_relaying_" content. (This
-  can be  useful for distributing load or moving content from within a private
-  network, using a private Hub,  to the public Internet, using a public Hub.)
+*  __Relaying:__ A chain of Hubs can be created for "_relaying_" content. This
+  can be useful for distributing load or creating a proxy or / reverse proxy 
+  Hub between Publishers and Subscribers.)
 
 
 
@@ -88,8 +88,8 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
 interpreted as described in [RFC2119](http://www.ietf.org/rfc/rfc2119.txt).
 
 Normative sections of this document are prescriptive parts of the specification.
-Informative sections are non-normative and although not part of the formal
-specification they do provide additional useful information (e.g. introduction,
+Informative sections are non-normative and although not part of the prescriptive
+specification they provide additional useful information (e.g. introduction,
 fragments of other specifications and examples.)
 
 <br/>
@@ -105,34 +105,36 @@ fragments of other specifications and examples.)
   PubSubHubbub, and unless otherwise specified, version 0.4.
 * __Topic/Feed:__ The words "feed" and "topic" are used interchangeably. A Topic
   is the unit to which one can subscribe to. It is a collection of entries.
-* __Entry/Item:__ A topic is a collection of entries (Synonymous with a feed
+* __Entry/Item:__ A topic is a collection of entries (synonymous with a feed
   being a collection of items).
 * __Publisher:__ (_noun_). An entity that sends notifications of Changes to a
   Topic.
 * __Originating Publisher:__ (_noun_). The Publisher entity that owns a Topic.
   They are the originating source and the only system where changes to
   the topic and it's entries can be authored.
-* __To publish:__ (_verb_). The process of notifying subscribers of changes to a
+* __To Publish:__ (_verb_). The process of notifying subscribers of changes to a
   Topic. The originating Publisher MUST _publish_ the Topic using the Relay
-  specification. Other systems MAY also re-_publish_ the Topic, in which case
-  they are acting as a Hub.
+  specification. Other systems that Subscribe to the Topic MAY  re-_publish_ it,
+  in which case they are acting as a Hub. 
+* __To Distribute:__ (_verb_). Synonymous with "to re-publish". The concept of
+  a Hub distributing content is introduced in PuSH and referred to in the Relay 
+  specification.
 * __Subscriber:__ (_noun_). An entity that receives notifications of changes to
   a Topic.
-* __To subscribe:__ (_verb_). The process of requesting a Publisher publishes to
-  a Subscriber on an on going basis. Usually initiated by the subscriber.
-* __Hub:__ An entity that both subscribers to a Topic and publishes it. A Hub
-  re-publishes ("_relays_") a Topic.
+* __To Subscribe:__ (_verb_). The process of requesting a changes to a Topic are
+  distributed to a Subscriber on an on going basis. 
+* __Hub:__ An entity that both subscribers to a Topic and re-publishes it. The Hub
+  effectively "_relays_" the Topic.
 
 ### General Concepts 
 ##### Informative:
 
-* All Relay Publishers are their own Hubs. 
-* A Publisher follows the same approach to _publishing_ content as a Hub
-follows for _distributing_ it. (PuSH uses "_publishing_" and "_distributing_" to
-refer to slightly different things and allow them to use different protocols but
-with Relay they use the same protocol.)
-* Hubs subscribe to Publishers or to other Hubs.
-* Subscribers subscribe to Hubs or to Publishers.
+1 All Relay Publishers are their own Hubs. 
+2 A Publisher follows the same approach to _publishing_ content as a Hub
+follows for _distributing_ it. 
+3 Hubs subscribe to Publishers.
+4 Subscribers subscribe to Hubs.
+5 Hubs can subscribe to other Hubs to create a chain of Hubs.
 
 
 <br/>
@@ -820,8 +822,7 @@ TODO
 ------------------------------------------------------------------------------------------------------------------------
 
 <!-- Long Spec START -->
-TODO
-![Relay_Verify](Relay_Verify.png)
+![Relay_Verify](Relay_Distribute.png)
 <!-- Long Spec END -->
 
 _Hub sends updates to Subscribers and any other Hubs_
