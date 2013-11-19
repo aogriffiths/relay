@@ -1,11 +1,12 @@
 Relay
 =====
 
-_Publish. Subscribe. Syndicate._
-
     ------->
     P      S 
     <-------  
+
+_Publish. Subscribe. Webhook. Syndicate._
+
 
 Relay Extension Specification(s)
 --------------------------------
@@ -49,10 +50,11 @@ This document specifies a range of optional extenstions to Realy.
 Introduction
 ------------------------------------------------------------------------------------------------------------------------
 
-Relay provides a core specification for the publisging, subscribing and distributing
-of content. This document provides specifications for:
+This document provides specifications for:
 
-* __[1. Topic Proxying](#1.)__
+* __[1. Topic Proxying](#1.)__ A Hub normally acts as a sort of transparaent proxy, it doesn't hide the fact it is proxying content from a Publisher. However with the Topic Proxying extension a Hub can act as a opaque proxy, efectively hiding the fact a topic was originally published elsewhere and making it look like the Hub itself is the originating publisher.
+
+* __[1. Linked Content](#1.)__ Topics may contain links to other content, such as images or related assets. This extentoins describes how Realy can handel these.
 
 * __[2. Handeling Failiures](#2.)__ - Publishers SHOULD stop POSTing to Subscribers
   after an agreed number of retrys fail. Both Publishers and Subscribers SHOULD

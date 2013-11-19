@@ -1,7 +1,7 @@
 Relay
 =====
 
-_Publish. Subscribe. Syndicate._
+_Publish. Subscribe. Webhook. Syndicate._
 
     ------->
     P      S 
@@ -10,31 +10,29 @@ _Publish. Subscribe. Syndicate._
 Core specification
 ------------------
 
-Relay - a protocol for syndicating content following a publish / subscribe and
-webhook pattern.
-
+* Relay - A protocol for syndicating content using a publish subscribe pattern.
 * __Status:__ DRAFT
 * __Latest Published Version:__
-    *  Long Version:  https://github.com/aogriffiths/relay/blob/spec-published/relay-specification.md
-    *  Short Version: https://github.com/aogriffiths/relay/blob/spec-published/relay-specification-short.md
+    *  __Long Version:__ [https://github.com/aogriffiths/relay/blob/spec-published/relay-specification.md]
+    *  __Short Version:__ [https://github.com/aogriffiths/relay/blob/spec-published/relay-specification-short.md]
 *  __Latest Editor's Draft:__
-    *  Long Version:  https://github.com/aogriffiths/relay/blob/spec-master/relay-specification.md
-    *  Short Version: https://github.com/aogriffiths/relay/blob/spec-master/relay-specification-short.md
+    *  __Long Version:__ [https://github.com/aogriffiths/relay/blob/spec-master/relay-specification.md]
+    *  __Short Version:__ [https://github.com/aogriffiths/relay/blob/spec-master/relay-specification-short.md]
 *  __Editor(s):__ 
     *  Adam Griffiths
-* __See Also:__ https://github.com/aogriffiths/relay/blob/spec-master/README.md
+* __See Also:__ [https://github.com/aogriffiths/relay/blob/spec-master/README.md]
 
 
 Long versions includes examples and useful extracts from the PubSubHubbub
 specification. Short versions omit these and other non-normative information.
 
-The Published versions are official approved releases of the specification.
-The Editor's Draft is the latest _work in progress_ version.
+The Published versions are official approved releases of the specification. The
+Editor's Draft is the latest _work in progress_ version.
 
-If you are implementing Relay or would find background and examples useful
-read the long versions. If you are only looking for the normative parts of the
-specifications or to see how simple the specification really is, read the
-short versions.
+If you are implementing Relay or would find background and examples useful read
+the long versions. If you are only looking for the normative parts of the
+specifications or to see how simple the specification really is, read the short
+versions.
 
 
 <br/>
@@ -42,8 +40,8 @@ short versions.
 Abstract
 ------------------------------------------------------------------------------------------------------------------------
 
-This document specifies "Relay" - a protocol for syndicating content following a
-publish/subscribe and webhook pattern.
+This document specifies "Relay", a protocol for syndicating content following
+the  publish / subscribe and webhook patterns.
 
 
 
@@ -52,23 +50,24 @@ publish/subscribe and webhook pattern.
 Introduction
 ------------------------------------------------------------------------------------------------------------------------
 
-Relay is inspired by and compatible with PubSubHubbub (PuSH). It also has 
-additional features that you might find useful. Relay promotes any server to
-be capable of being a Publisher, a Subscriber, a Hub or all three and content
-is effectively "_relayed_" between them.
+Relay is inspired by and compatible with PubSubHubbub (PuSH) but also offers 
+additional features and extensions that you might find useful. Relay considers
+any server to be capable of being a Publisher, a Subscriber, a Hub or all three
+and content can be "_relayed_" from the Publisher to Subscribers
+directly or via one or more Hubs.
 
 
-The main difference to PuSH is that Relay requires all Publishers publish their
-content using exactly the same protocol as Hubs use to distribute content. In
-other words a Publisher sends content to a Hub in exactly the same way as a Hub
-sends content to a Subscriber. The benefits are:
+The main difference to PuSH is that Relay requires all Publishers publish 
+their content using the same protocol as Hubs use to distribute content.  
+In other words a Publisher sends content to a Hub in exactly the same way as a 
+Hub sends content to a Subscriber. The benefits are:
 
 * __Simplicity:__ All content is sent between Publishers, Subscribers and Hubs 
   using the same protocol.
 * __Compatibility:__ Relay is compatible with PuSH v0.4.
-*  __Relaying:__ A chain of Hubs can be created for "_relaying_" content. This
-  can be useful for distributing load or creating a proxy or / reverse proxy 
-  Hub between Publishers and Subscribers.)
+* __Relaying:__ A chain of Hubs can be created for "_relaying_" content, which 
+  can be useful for distributing load or moving content from within a private
+  network, using a private Hub, to the public Internet, using a public Hub.
 
 
 
@@ -82,10 +81,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
 "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
 interpreted as described in [RFC2119](http://www.ietf.org/rfc/rfc2119.txt).
 
-Normative sections of this document are prescriptive parts of the specification.
-Informative sections are non-normative and although not part of the prescriptive
-specification they provide additional useful information (e.g. introduction,
-fragments of other specifications and examples.)
+
 
 <br/>
 <a name="2."></a>
@@ -93,58 +89,53 @@ fragments of other specifications and examples.)
 2. Definitions
 ------------------------------------------------------------------------------------------------------------------------
 
-### Specific Definitions 
-##### Normative:
+### Specific Definitions
 
 * __PuSH:__ When the word "push" is capitalised as "PuSH" it refers to
   PubSubHubbub, and unless otherwise specified, version 0.4.
 * __Topic/Feed:__ The words "feed" and "topic" are used interchangeably. A Topic
   is the unit to which one can subscribe to. It is a collection of entries.
-* __Entry/Item:__ A topic is a collection of entries (synonymous with a feed
+* __Entry/Item:__ A topic is a collection of entries (Synonymous with a feed
   being a collection of items).
 * __Publisher:__ (_noun_). An entity that sends notifications of Changes to a
   Topic.
 * __Originating Publisher:__ (_noun_). The Publisher entity that owns a Topic.
   They are the originating source and the only system where changes to
   the topic and it's entries can be authored.
-* __To Publish:__ (_verb_). The process of notifying subscribers of changes to a
+* __To publish:__ (_verb_). The process of notifying subscribers of changes to a
   Topic. The originating Publisher MUST _publish_ the Topic using the Relay
-  specification. Other systems that Subscribe to the Topic MAY  re-_publish_ it,
-  in which case they are acting as a Hub. 
-* __To Distribute:__ (_verb_). Synonymous with "to re-publish". The concept of
-  a Hub distributing content is introduced in PuSH and referred to in the Relay 
-  specification.
+  specification. Other systems MAY also re-_publish_ the Topic, in which case
+  they are acting as a Hub.
 * __Subscriber:__ (_noun_). An entity that receives notifications of changes to
   a Topic.
-* __To Subscribe:__ (_verb_). The process of requesting a changes to a Topic are
-  distributed to a Subscriber on an on going basis. 
-* __Hub:__ An entity that both subscribers to a Topic and re-publishes it. The Hub
-  effectively "_relays_" the Topic.
+* __To subscribe:__ (_verb_). The process of requesting a Publisher publishes to
+  a Subscriber on an on going basis. Usually initiated by the subscriber.
+* __Hub:__ An entity that both subscribers to a Topic and publishes it. A Hub
+  re-publishes ("_relays_") a Topic.
 
-### General Concepts 
-##### Informative:
+### General Concepts
 
-1 All Relay Publishers are their own Hubs. 
-2 A Publisher follows the same approach to _publishing_ content as a Hub
-follows for _distributing_ it. 
-3 Hubs subscribe to Publishers.
-4 Subscribers subscribe to Hubs.
-5 Hubs can subscribe to other Hubs to create a chain of Hubs.
+* All Relay Publishers are their own Hubs. 
+* A Publisher follows the same approach to _publishing_ content as a Hub
+follows for _distributing_ it. PuSH uses "publishing" and "distributing" to
+refer to slightly different things but Relay seeks to make them the same
+thing.
+* Hubs subscribe to Publishers or other Hubs.
+* Subscribers subscribe to Hubs or Publishers.
 
 
 <br/>
 <a name="3."></a>
 ************************************************************************************************************************
-3. High-level protocol flow 
+3. High-level protocol flow
 ------------------------------------------------------------------------------------------------------------------------
-##### Informative:
 
 The protocol for Relay following the protocol PuSH and is outlined in sections
 4 to 7 of this specification.
 
-<!-- Long Spec START -->  
-The following information is non-normative but serves as an overview of the
-protocol and index to sections 4 to 7 in this specification.
+<!-- Long Spec START --> 
+The following information is non-normative but serves
+as an overview of the protocol and index to sections 4 to 7 in this specification.
 
 * __[4. Discovery ](#4.)__ - A Subscriber discovers a Topic from a Publisher
   and how to subscribe to it.
@@ -155,15 +146,15 @@ protocol and index to sections 4 to 7 in this specification.
       Subscription Request to a Hub. 
     * __[5.2. Subscription Validation ](#5.2.)__ - The Hub validates the 
       Subscription Request.
-    * __[5.3. Subscriber Verification ](#5.3.)__ - The Hub verifies the intent 
-      of the Subscriber.
+    * __[5.3. Subscriber Verification ](#5.3.)__ - The Hub verifies the intent of
+      the Subscriber.
     * __[5.4. Subscription Renewall](#5.4.)__ - The Hub periodically confirms 
       with the Subscriber to check if the subscription is still required.
-    * __[5.5. Subscription Denial ](#5.5.)__ - The Hub informs the Subscriber 
-      that the subscription has been denied and is not (or no longer) active.
+    * __[5.5. Subscription Denial ](#5.5.)__ - The Hub informs the Subscriber that
+      the subscription has been denied and is not (or no longer) active.
 
-* __[6. Publishing ](#6.)__ - Publishers POST any topic changes to their 
-  subscriber(s) (which many be Hubs). 
+* __[6. Publishing ](#6.)__ - Publishers POST any topic changes to their subscriber(s)
+  (which many be Hubs). 
 
 * __[7. Content Distribution ](#7.)__ - When Hubs receive
   POSTed Topic changes the POST them on to their subscriber(s), which many also
@@ -181,11 +172,9 @@ protocol and index to sections 4 to 7 in this specification.
 ************************************************************************************************************************
 4. Discovery
 ------------------------------------------------------------------------------------------------------------------------
+_The Subscriber discovers from a Publisher the Hub(s) which it is publishing to._
 
 
-_The Subscriber discovers from a Publisher the Hub(s) which it is publishing to_
-
-##### Normative:
 
 1. Adhere to section 4. "Discovery" in the PuSH v0.4 specification.
 
@@ -228,17 +217,25 @@ _The Subscriber discovers from a Publisher the Hub(s) which it is publishing to_
 
 
 
+
 <br/>
 <a name="5."></a>
 ************************************************************************************************************************
 5. Subscribing and Unsubscribing
 ------------------------------------------------------------------------------------------------------------------------
 
-_The Subscriber subscribes to a Topic with the Hub_
-
-##### Normative:
-
 1. Adhere to section 5. "Subscribing and Unsubscribing" in the PuSH 0.4 specification
+
+2. (non-normative) The following notes are useful if you wish to read the Relay 
+   specification in conjunction with the PuSH specification:
+   * Sections 5.1, 5.2, 5.3 and 5.4 in this specification map to the four bullets in 
+     section 5 of the PuSH 0.4 specification. 
+   * Sections 5.1, 5.2, 5.3 in this specification relate to sections of the same 
+     numbers in the PuSH 0.4 specification. 
+   * Section 5.4 in this specification describes subscription reconfirming / renewal, 
+     of a subscription which is mentioned in various places in the PuSH 0.4 specification. 
+   * Section 5.5 in this specification describes subscription
+     denying, which is referred to in section 5.2 of the PuSH 0.4 specification.
 
 
 <br/>
@@ -246,18 +243,16 @@ _The Subscriber subscribes to a Topic with the Hub_
 ************************************************************************************************************************
 ### 5.1. Subscription Request
 
-
 _The Subscriber sends a Subscription Request to a Hub_
 
-##### Normative:
+
 
 1. Adhere to sections 5.1, 5.1.1 and 5.1.2 "Subscriber 
    Sends Subscription Request" in the PuSH v0.4 specification.
 
 2. The topic URL (hub.topic) MUST be the advertised_topic_url as defined in 
-   [section 4 point 2](#4.2). The hub URL mus
+   [section 4 point 2](#4.2) of this specification. The hub URL mus
 
-   TODO...
 
 3. <a name="5.1.3"></a>
    A well formed subscription request MUST meet the following criteria:
@@ -280,10 +275,9 @@ _The Subscriber sends a Subscription Request to a Hub_
 ************************************************************************************************************************
 ### 5.2. Subscription Validation 
 
-
 _The Hub validates the Subscription Request_
 
-##### Normative:
+
 
 1. Adhere to section 5.2 "Subscription Validation" in the PuSH v0.4 specification.
 
@@ -315,13 +309,11 @@ _The Hub validates the Subscription Request_
 ************************************************************************************************************************
 ### 5\.3\. Subscriber Verification
 
-
 _The Publisher verifies the intent of the Subscriber_
 
-##### Normative:
 
-1. Adhere to section 5.3 "Hub Verifies Intent of the Subscriber" in the PuSH 
-   v0.4 specification.
+
+1. Adhere to section 5.3 "Hub Verifies Intent of the Subscriber" in the PuSH v0.4 specification.
 
 
 <br/>
@@ -342,12 +334,11 @@ _The Subscriber sends a Subscription Request to a Hub_
 ************************************************************************************************************************
 ### 5.5. Subscription Denial
 
-
 _Hub informs the Subscriber when a subscription is denied_
 
-##### Normative:
 
-1. TODO
+
+1. Adhere to section 5.2 "Subscription Validation" (third paragraph onwards) in the PuSH v0.4 specification.
 
 
 <br/>
@@ -355,52 +346,50 @@ _Hub informs the Subscriber when a subscription is denied_
 ************************************************************************************************************************
 6. Publishing
 ------------------------------------------------------------------------------------------------------------------------
-
-
 _The Publisher sends updates to it's Hubs and any other Subscribers_
 
-##### Normative:
+
 
 1. Adhere to section 6 "Publishing" of the PuSH v0.4 specification.
 
-TODO 
-
 2. Adhere to section 3 "High-level protocol flow" in the PuSH v0.4 specification.
-   Specifically MUST adhere to the first bullet. MAY NOT adhere to the third bullet (
-   which is acceptable given section 6 "Publishing" in the PuSH v0.4 specification).
+   Specifically adhere to the first bullet (Publishers notify Hubs when Topics change) 
+   but MAY NOT adhere to the third bullet regarding Hubs fetching a Topic feed from a 
+   Publisher. With Relay the Publisher MUST POST Topic changes to the Hub, which is
+   acceptable given section 6 "Publishing" in the PuSH v0.4 specification (which says 
+   "The hub and the publisher can agree on any mechanism").
 
-TODO
-
-3. PuSH leaves it open as to how a Publisher sends content to a Hub. However with Relay
-   Publishers and Hubs MUST both send their content to their Subscribers in an
-   identical way. See section [5. Subscribing and Unsubscribing](#5.) and 
-   section [7. Content Distribution]#(7.) of this specification of how that is done.
+3. The mechanism that Relay requires is that Publishers send Topic changes to Hubs is identical 
+   to how Hubs send Topic changes to Subscribers. Therefore section 
+   5. Subscribing and Unsubscribing](#5.) and section [7. Content Distribution](#7.) of 
+   this specification apply equally to Publishers as they do to Hubs.
 
 
-<br/><br/><a name="7."></a>
+
+
+
+<br/>
+<a name="7."></a>
 ************************************************************************************************************************
 7. Content Distribution
 ------------------------------------------------------------------------------------------------------------------------
 
+_Hub sends updates to Subscribers and any other Hubs_.
 
-_Hub sends updates to Subscribers and any other Hubs_
+(Applies equally to _Publisher sends updates to Hubs and any direct Subscribers_.)
 
-##### Normative:
+
 
 1. Adhere to section 7 "Content Distribution" of the PuSH v0.4 specification.
 
 
-
-<br/><br/><a name="8."></a>
+<br/>
+<a name="8."></a>
 ************************************************************************************************************************
 8. Authenticated Content Distribution
 ------------------------------------------------------------------------------------------------------------------------
 
-_TODO_
-
-##### Normative:
-
-1. Adhere to section 8 "Authenticated Content Distribution" of the PuSH v0.4 specification.
+TODO
 
 
 

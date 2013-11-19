@@ -1,11 +1,11 @@
 Relay
 =====
 
-_Publish. Subscribe. Syndicate._
-
     ------->
     P      S 
     <-------  
+
+_Publish. Subscribe. Webhook. Syndicate._
 
 This repository holds the latest Relay spefications, which are published in a number of ways.
 
