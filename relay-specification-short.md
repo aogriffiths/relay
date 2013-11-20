@@ -85,7 +85,17 @@ interpreted as described in [RFC2119](http://www.ietf.org/rfc/rfc2119.txt).
 Normative sections of this document are prescriptive parts of the specification.
 Informative sections are non-normative and although not part of the prescriptive
 specification they provide additional useful information (e.g. introduction,
-fragments of other specifications and examples.)
+fragments of other specifications and examples.). If a section is not explicitly 
+indicated as normative or informative it should be assumed to be normative.
+
+<!-- Long Spec START -->   
+
+In some sections a "reference implementation" is provided which suggests
+specific URLS and http conventions to use when implementing Relay. These do not
+need to be adhered to to be Relay compliant but they provide some simple
+suggestions that may help when implementing Relay.
+
+<!-- Long Spec END -->   
 
 <br/>
 <a name="2."></a>
@@ -93,8 +103,7 @@ fragments of other specifications and examples.)
 2. Definitions
 ------------------------------------------------------------------------------------------------------------------------
 
-### Specific Definitions 
-###### Normative:
+### Specific Definitions (Normative)
 
 * __PuSH:__ When the word "push" is capitalised as "PuSH" it refers to
   PubSubHubbub, and unless otherwise specified, version 0.4.
@@ -121,8 +130,7 @@ fragments of other specifications and examples.)
 * __Hub:__ An entity that both subscribers to a Topic and re-publishes it. The Hub
   effectively "_relays_" the Topic.
 
-### General Concepts 
-###### Informative:
+### General Concepts (Informative)
 
 1. All Relay Publishers are their own Hubs. 
 2. A Publisher follows the same approach to _publishing_ content as a Hub
@@ -135,18 +143,17 @@ fragments of other specifications and examples.)
 <br/>
 <a name="3."></a>
 ************************************************************************************************************************
-3. High-level protocol flow 
+3. High-level protocol flow (Informative)
 ------------------------------------------------------------------------------------------------------------------------
-###### Informative:
 
 The protocol for Relay follows the protocol PuSH and is outlined in sections 4
-to 8. (See also section 3 of the PuSH v0.4 specification and note Section 3 to 8
-of this specification broadly map to sections 3 to 8 of the PuSH v0.4
-specification.)
+to 8. (note Section 3 to 8 of this specification broadly map to sections 3 to 8
+of the PuSH v0.4 specification.)
 
-<!-- Long Spec START -->  
-The following information is non-normative but serves as an overview of the
-protocol and index to sections 4 to 8.
+<!-- Long Spec START -->   
+
+The following information provides an overview of the protocol and index to
+sections 4 to 8.
 
 * __[4. Discovery ](#4.)__ - A Subscriber discovers a Topic from a Publisher
   and how to subscribe to it.
@@ -176,8 +183,7 @@ protocol and index to sections 4 to 8.
 * __[8. Authenticated Content Distribution ](#8.)__ - 
 
 
-#### PuSH Specification
-###### Informative:
+#### PuSH v0.4 Specification (Informative, for Reference)
 
 ![66](66.png)
 > 3\. High-level protocol flow
@@ -202,10 +208,9 @@ protocol and index to sections 4 to 8.
 4. Discovery
 ------------------------------------------------------------------------------------------------------------------------
 
-
 _The Subscriber discovers which Hub(s) a Publisher is using_
 
-###### Normative:
+
 
 1. Adhere to section 4. "Discovery" in the PuSH v0.4 specification.
 
@@ -220,14 +225,13 @@ _The Subscriber discovers which Hub(s) a Publisher is using_
    available and the requested_topic_url when there is not. In effect this means
    the advertised_topic_url overrides the requested_topic_url.
 
-3. __Hub Links:__ There MAY be more than one hub link header (with rel=hub). If 
-   so Subscribers MAY subscriber to one or more Hub. Subscribing to one is
-   RECOMMENDED and Subscribers SHOULD use the first first hub link provided
-   unless there is a reason not to. Publishes SHOULD put their preferred hub
-   first in the order of hub link headers. The selected Hub URL SHOULD be
-   referred to as the "advertised_hub_url". (If there were several Hubs advertised 
-   this might more accurately be called the selected_hub_url_from_the_advertised_urls
-   but this documentation abbreviates it to just the advertised_hub_url.)
+3. <a name="4.3"></a> 
+   __Hub URLS:__ There MAY be one or more hub link headers (with rel=hub), each
+   containing a hub_url which are collectively referred to as the
+   advertised_hub_urls. Subscribers MAY subscribe to one or more of these.
+   Subscribing to one is RECOMMENDED and Subscribers SHOULD use the first hub
+   link provided unless there is a valid reason not to. Publishes SHOULD put
+   their preferred hub first in the order of hub link headers.
 
 4. __Publisher's Own Hub:__ Relay requires all Publishers MUST be capable of 
    being their own hub. It is therefore RECOMMENDED that at least one hub link
@@ -256,9 +260,10 @@ _The Subscriber discovers which Hub(s) a Publisher is using_
 
 _The Subscriber subscribes to a Hub for a Topic_
 
-###### Normative:
 
-1. Adhere to section 5. "Subscribing and Unsubscribing" in the PuSH 0.4 specification
+1. Adhere to section 5. "Subscribing and Unsubscribing" in the PuSH 0.4 
+   specification. See also all sub sections of section 5 in both this and the 
+   PuSH 0.4 specification.
 
 
 <br/>
@@ -266,20 +271,20 @@ _The Subscriber subscribes to a Hub for a Topic_
 ************************************************************************************************************************
 ### 5.1. Subscription Request
 
-
 _The Subscriber sends a Subscription Request to a Hub_
 
-###### Normative:
+
 
 1. Adhere to sections 5.1, 5.1.1 and 5.1.2 "Subscriber 
    Sends Subscription Request" in the PuSH v0.4 specification.
 
-2. The topic URL (hub.topic) MUST be the advertised_topic_url as defined in 
-   [section 4 point 2](#4.2). The hub URL mus
+2. The "topic URL" (hub.topic) MUST be the advertised_topic_url as defined in 
+   [section 4 point 2](#4.2). 
 
-   TODO...
+3. The "hub URL" must be one of the advertised_hub_urls as defined in 
+   [section 4 point 3](#4.3).
 
-3. <a name="5.1.3"></a>
+4. <a name="5.1.4"></a>
    A well formed subscription request MUST meet the following criteria:
     * `hub.callback` is present and is a valid URL 
     * `hub.mode` is present and is either "subscribe" or "unsubscribe". If it is
@@ -290,7 +295,7 @@ _The Subscriber sends a Subscription Request to a Hub_
         is willing to "auto subscribe" and set up a new subscription to this
         topic.
 
-4. A well formed subscription request MAY meet the following criteria:
+5. A well formed subscription request MAY meet the following criteria:
     * `hub.lease_seconds` is present and is a number
     * `hub.secret` is present and is alphanumeric
 
@@ -300,15 +305,14 @@ _The Subscriber sends a Subscription Request to a Hub_
 ************************************************************************************************************************
 ### 5.2. Subscription Validation 
 
-
 _The Hub validates the Subscription Request_
 
-###### Normative:
+
 
 1. Adhere to section 5.2 "Subscription Validation" in the PuSH v0.4 specification.
 
 2. Validation SHOULD include the hub checking the subscription request is well 
-   formed as defined in [section 5.1 point 3](#5.1.3) of this specification.
+   formed as defined in [section 5.1 point 4](#5.1.4).
 
 3. Validation MAY include ensuring the subscriber or publisher have not 
    been blacklisted and the Hub is "willing" to maintain the new subscription
@@ -321,12 +325,13 @@ _The Hub validates the Subscription Request_
    complete the Denial step. See [section 5.5](#5.5) of this specification.
 
 6. The Hub MAY integrate with the original Publisher for further validation of 
-   the subscription. This specification does not recommend how that is done but
+   the subscription. This specification does not suggest how that is done but
    an approach may be specified in a suitable a relay extension. (However it 
    is worth noting that after a Publisher distributes content to a Hub is 
-   technically cannot mandate what the Hub does with that content afterwards.
-   Fair use or contractual policies may go some way to addressing this but 
-   Publishers should only distribute content to Hubs that they trust.)
+   technically cannot mandate what the Hub does with that content.
+   Fair use or contractual policies could go some way to addressing this but 
+   Publishers should only distribute content to Hubs and Subscribers that they 
+   trust.)
 
 
 
@@ -335,10 +340,10 @@ _The Hub validates the Subscription Request_
 ************************************************************************************************************************
 ### 5\.3\. Subscriber Verification
 
-
 _The Publisher verifies the intent of the Subscriber_
 
-###### Normative:
+
+
 
 1. Adhere to section 5.3 "Hub Verifies Intent of the Subscriber" in the PuSH 
    v0.4 specification.
@@ -352,22 +357,39 @@ _The Publisher verifies the intent of the Subscriber_
 _The Subscriber sends a Subscription Request to a Hub_
 
 
-1. Subscriber is given a number of `lease_seconds` and MUST resubscribe before
-   these have elapsed.
+1. Hub MUST provide a number of `lease_seconds` in the Verification Request
+   sent to the Subscriber. This MAY NOT be equal to the the number of lease 
+   seconds the Subscriber requested in the Subscription Request.
 
-2. Re-subscription follows exactly the same steps as the initial subscription.
+2. The Subscriber MUST resubscribe before the number of lease seconds have 
+   elapsed. The elapsed time is calculated as the number of seconds since the Verification 
+   Request was sent by the Hub and MUST be based on the UTC time provided in the
+   `Sent:` header of that request. To ensure Hubs and Subscribers make the same 
+   calculation of elapsed time clocks should be accurately set and either Hub or 
+   Subscriber MAY respond with an error if and when they discover a clock difference
+   beyond normal tolerances.
+
+2. A Hub MAY stop distributing to a Subscriber after `lease_seconds` have 
+   elapsed. If a Hub will stop distributing it SHOULD allow a grace period number 
+   of seconds before stopping, to allow for clock differences and any other 
+
+3. The elapsed number of seconds MUST be calculated as the number of seconds 
+   since the last successful subscription request was made.
+
+4. Re-subscription follows exactly the same steps as the initial subscription, 
+   starting with the steps described in __[5.1. Subscription Request ](#5.1.).
 
 <br/>
 <a name="5.5."></a>
 ************************************************************************************************************************
 ### 5.5. Subscription Denial
 
-
 _Hub informs the Subscriber when a subscription is denied_
 
-###### Normative:
 
-1. TODO
+
+1. Adhere to section 5.2 "Subscription Validation", paragraph 3 in the PuSH 
+   v0.4 specification.
 
 
 <br/>
@@ -376,10 +398,10 @@ _Hub informs the Subscriber when a subscription is denied_
 6. Publishing
 ------------------------------------------------------------------------------------------------------------------------
 
-
 _The Publisher sends updates to it's Hubs and any other Subscribers_
 
-###### Normative:
+
+
 
 1. Adhere to section 6 "Publishing" of the PuSH v0.4 specification.
 
@@ -402,10 +424,10 @@ TODO
 7. Content Distribution
 ------------------------------------------------------------------------------------------------------------------------
 
-
 _Hub sends updates to Subscribers and any other Hubs_
 
-###### Normative:
+
+
 
 1. Adhere to section 7 "Content Distribution" of the PuSH v0.4 specification.
 
@@ -416,9 +438,8 @@ _Hub sends updates to Subscribers and any other Hubs_
 8. Authenticated Content Distribution
 ------------------------------------------------------------------------------------------------------------------------
 
-_TODO_
+_The Hub signs content distribution requests_
 
-###### Normative:
 
 1. Adhere to section 8 "Authenticated Content Distribution" of the PuSH v0.4 specification.
 
