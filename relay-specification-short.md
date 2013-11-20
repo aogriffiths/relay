@@ -190,14 +190,15 @@ sections 4 to 8.
 
 > (This section is non-normative.)
 
-> Publishers notify their hub(s) URLs when their topic(s) change. Subscribers
-> POST to one or more of the advertised hubs for a topic they're interested in.
-> Alternatively, some hubs may offer auto-polling capability, to let {their,any}
-> subscribers subscribe to topics which don't advertise a hub. The hub caches
-> minimal metadata (id, data, entry digest) about each topic's previous state.
-> When the hub re-fetches a topic feed (on its own initiative or as a result of
-> a publisher's ping) and finds a delta, it enqueues a notification to all
-> registered subscribers.
+> * Publishers notify their hub(s) URLs when their topic(s) change. 
+> * Subscribers POST to one or more of the advertised hubs for a topic they're 
+>   interested in. Alternatively, some hubs may offer auto-polling capability, 
+>   to let {their,any} subscribers subscribe to topics which don't advertise a 
+>   hub. 
+> * The hub caches minimal metadata (id, data, entry digest) about each topic's 
+>   previous state. When the hub re-fetches a topic feed (on its own initiative 
+>   or as a result of a publisher's ping) and finds a delta, it enqueues a
+>   notification to all registered subscribers.
 
 ![99](99.png)
 <!-- Long Spec END -->
@@ -377,7 +378,7 @@ _The Subscriber sends a Subscription Request to a Hub_
    since the last successful subscription request was made.
 
 4. Re-subscription follows exactly the same steps as the initial subscription, 
-   starting with the steps described in __[5.1. Subscription Request ](#5.1.).
+   starting with the steps described in [5.1. Subscription Request ](#5.1.).
 
 <br/>
 <a name="5.5."></a>
@@ -402,21 +403,20 @@ _The Publisher sends updates to it's Hubs and any other Subscribers_
 
 
 
+#### Relay Specification (Informative)
 
-1. Adhere to section 6 "Publishing" of the PuSH v0.4 specification.
+1. PuSH leaves it open as to how a Publisher sends content to a Hub. With Relay
+   Publishers and Hubs MUST send their content to their Subscribers in the same way. 
+   In other words the Publishing protocol is identical to the Content Distribution 
+   protocol. See section See section [7. Content Distribution](#7.).
 
-TODO 
+#### Relay Specification (Normative)
+
+1. Adhere to section 6 "Publishing" of the PuSH v0.4 specification. 
 
 2. Adhere to section 3 "High-level protocol flow" in the PuSH v0.4 specification.
    Specifically MUST adhere to the first bullet. MAY NOT adhere to the third bullet (
    which is acceptable given section 6 "Publishing" in the PuSH v0.4 specification).
-
-TODO
-
-3. PuSH leaves it open as to how a Publisher sends content to a Hub. However with Relay
-   Publishers and Hubs MUST both send their content to their Subscribers in an
-   identical way. See section [5. Subscribing and Unsubscribing](#5.) and 
-   section [7. Content Distribution]#(7.) of this specification of how that is done.
 
 
 <br/><br/><a name="7."></a>
