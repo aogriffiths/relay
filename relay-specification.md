@@ -151,6 +151,10 @@ suggestions that may help when implementing Relay.
 3. High-level protocol flow (Informative)
 ------------------------------------------------------------------------------------------------------------------------
 
+<!-- Long Spec START -->
+![Relay_Discovery](Relay_Main.png)
+<!-- Long Spec End -->
+
 The protocol for Relay follows the protocol PuSH and is outlined in sections 4
 to 8. (note Section 3 to 8 of this specification broadly map to sections 3 to 8
 of the PuSH v0.4 specification.)
@@ -798,7 +802,7 @@ _The Publisher sends updates to it's Hubs and any other Subscribers_
 <!-- Long Spec START -->
 ![Relay_Publish](Relay_Publish.png)
 
-#### Examples
+#### Examples (Informative)
 
 See section [7. Content Distribution](#7.)
 <!-- Long Spec END -->
@@ -816,8 +820,11 @@ See section [7. Content Distribution](#7.)
 1. Adhere to section 6 "Publishing" of the PuSH v0.4 specification. 
 
 2. Adhere to section 3 "High-level protocol flow" in the PuSH v0.4 specification.
-   Specifically MUST adhere to the first bullet. MAY NOT adhere to the third bullet (
-   which is acceptable given section 6 "Publishing" in the PuSH v0.4 specification).
+   Specifically MUST adhere to the first bullet ("Publishers notify their hub(s) 
+   URLs when their topic(s) change."). MAY NOT adhere to the point in the third 
+   bullet regarding a hub "re-fetching" content, but this is acceptable given 
+   section 6 "Publishing" in the PuSH v0.4 specification (which refers to the 
+   publisher using "any mechanism" to update the hub).
 
 <!-- Long Spec START -->
 #### PuSH v0.4 Specification (Informative, for Reference)
@@ -830,9 +837,6 @@ See section [7. Content Distribution](#7.)
 > as the hub is eventually able send the updated payload to the subscribers.
 
 ![99](99.png)
-
-#### Examples (Informative)
-
 <!-- Long Spec END -->
 
 <br/><br/><a name="7."></a>
@@ -854,6 +858,8 @@ Publisher Request:
     POST <subscriber_callback_url> HTTP/1.1
     Content-Type: <topic_content_type>
     Link: <hub_url>; rel=hub, <topic_url>; rel=self
+
+    <payload>
 
 Subscriber Response (success):
 
