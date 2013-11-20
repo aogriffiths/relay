@@ -851,8 +851,6 @@ _Hub sends updates to Subscribers and any other Hubs_
 
 #### Examples (Informative)
 
-![Relay_Distribute](Relay_Distribute.png)
-
 Publisher Request:
 
     POST <subscriber_callback_url> HTTP/1.1
