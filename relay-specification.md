@@ -70,13 +70,13 @@ in exactly the same way as Hubs send content to Subscribers.
 
 |                    | PuSH     | Relay   |
 | ------------------ |:-------- |:------- |
-|1. Hosts the Topic  |    P..   |   P..   |
-|2. Published From   |    P..   |   PH. * |
-|3. Distributed From |    .H.   |   PH. * |
-|4. Subscribed To    |    .H.   |   PH.   |
-|5. Published To     |    .H.   |   .HS $ |
-|6. Distributed To   |    ..S   |   .HS $ |
-|7. Subscribed From  |    ..S   |   .HS   |
+|1. Hosts the Topic  |    P__   |   P__   |
+|2. Published From   |    P__   |   PH_ * |
+|3. Distributed From |    _H_   |   PH_ * |
+|4. Subscribed To    |    _H_   |   PH_   |
+|5. Published To     |    _H_   |   _HS $ |
+|6. Distributed To   |    __S   |   _HS $ |
+|7. Subscribed From  |    __S   |   _HS   |
 
 
 
