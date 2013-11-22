@@ -10,15 +10,15 @@ _Publish. Subscribe. Webhook. Syndicate._
 This repository holds the latest Relay spefications, which are published in a number of ways.
 
 Long versions includes examples and useful extracts from the PubSubHubbub
-specification. Short versions omit these and other non-normative information.
+specification. __Read these if you are implementing Relay or would find
+background and examples useful.__
 
-The Published versions are official approved releases of the specification.
-The Editor's Draft is the latest _work in progress_ version.
+Short versions omit these and other non-normative information. __Read the these
+if you are only looking for the normative parts of the specifications or to see
+how simple the specification really is.__
 
-If you are implementing Relay or would find background and examples useful
-read the long versions. If you are only looking for the normative parts of the
-specifications or to see how simple the specification really is, read the
-short versions.
+The Published versions are official approved releases of the specification. The
+Editor's Draft is the latest _work in progress_ version.
 
 
 Core Specification
