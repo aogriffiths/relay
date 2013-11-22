@@ -57,15 +57,28 @@ Relay is inspired by and compatible with PubSubHubbub (PuSH). Relay and PuSH
 provide a protocol for Subscribers to subscribe to a Topic which is maintained
 by a Publisher. When the Publisher has updates to that Topic they are then sent,
 or "syndicated" to all Subscribers. This is the so called "webhook" pattern
-which promotes loose coupling, high flexibility and the ability for Subscribers
-to easily receive updates, without the publishing system needing to be modified, 
-or even be aware of who the Subscribers are. 
+which promotes loose coupling and the ability for Subscribers to easily register
+for and be sent updates, without the publishing system needing to be modified,
+or even be aware of who the Subscribers are.
 
 PuSH achieves the pattern by introducing a Hub. Publishers publish updates to
 the Hub and the Hub distributes them to Subscribers. The main extension Relay
 makes to this is to require Publishers publish content using the same protocol
-that Hubs use to distribute it. In other words Publishers sends content to
-Hubs in exactly the same way as Hubs send content to Subscribers.
+that Hubs use to distribute it. In other words Publishers sends content to Hubs
+in exactly the same way as Hubs send content to Subscribers. 
+
+
+|                    | PuSH     | Relay   |
+| ------------------ |:-------- |:------- |
+|1. Hosts the Topic  |    P..   |   P..   |
+|2. Published From   |    P..   |   PH. * |
+|3. Distributed From |    .H.   |   PH. * |
+|4. Subscribed To    |    .H.   |   PH.   |
+|5. Published To     |    .H.   |   .HS $ |
+|6. Distributed To   |    ..S   |   .HS $ |
+|7. Subscribed From  |    ..S   |   .HS   |
+
+
 
 <!-- Long Spec START -->
 What does this mean? A picture is worth a thousand words:
