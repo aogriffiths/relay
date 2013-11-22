@@ -128,6 +128,20 @@ subscribes to at the time of subscribing. This
 
 ************************************************************************************************************************
 
+Feed Types
+
+Create Only
+
+With this feed type Topic Entries can only ever be created, they can't be updated or deleted. A good example would be log entries (e.g. lines in a log file). It may not be essential to preserve the order of the feed, or if order is important the reciving party can persist new Entries in any order and sort them into order later. For example log file entries are usauly in timestamp order, of they are sent to a Subscriber and though various Hubs and internet latencies they get out of order the Subscriber can always resort them by timestamp in the future.
+
+
+Create Update
+
+Order is much more important with feeds that allow updates. It must be possible to know which updates come after others so as not to apply an old update after a more recent one.
+
+Create Update Delete
+
+
 OLD Content TO Sort Out
 =======================
 
