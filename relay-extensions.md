@@ -8,8 +8,8 @@ Relay
 _Publish. Subscribe. Webhook. Syndicate._
 
 
-Relay Extension Specification(s)
---------------------------------
+Document Status
+---------------
 
 Relay Extensions - A range of optional extensions to Relay.
 
