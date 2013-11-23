@@ -67,16 +67,20 @@ makes to this is to require Publishers publish content using the same protocol
 that Hubs use to distribute it. In other words Publishers sends content to Hubs
 in exactly the same way as Hubs send content to Subscribers. 
 
+![B](B.png)
+![P](P.png)
+![H](H.png)
+![S](S.png)
 
-|                    | PuSH     | Relay   |
-| ------------------ |:-------- |:------- |
-|1. Hosts the Topic  |    P__   |   P__   |
-|2. Published From   |    P__   |   PH_ * |
-|3. Distributed From |    \_H_   |   PH_ * |
-|4. Subscribed To    |    \_H_   |   PH_   |
-|5. Published To     |    \_H_   |   _HS $ |
-|6. Distributed To   |    __S   |   _HS $ |
-|7. Subscribed From  |    __S   |   _HS   |
+|                    | PuSH                                  | Relay                                 |
+| ------------------ |:------------------------------------- |:------------------------------------- |
+|1. Hosts the Topic  |   ![P](P.png)![B](B.png)![B](B.png)   |   ![P](P.png)![B](B.png)![B](B.png)   |
+|2. Published From   |   ![P](P.png)![B](B.png)![B](B.png)   |   ![P](P.png)![B](B.png)![B](B.png)   |
+|3. Distributed From |   ![B](B.png)![H](H.png)![B](B.png)   |   ![P](P.png)![H](H.png)![B](B.png)   |
+|4. Subscribed To    |   ![B](B.png)![H](H.png)![B](B.png)   |   ![P](P.png)![H](H.png)![B](B.png)   |
+|5. Published To     |   ![B](B.png)![H](H.png)![B](B.png)   |   ![B](B.png)![H](H.png)![S](S.png)   |
+|6. Distributed To   |   ![B](B.png)![B](B.png)![S](S.png)   |   ![B](B.png)![B](B.png)![S](S.png)   |
+|7. Subscribed From  |   ![B](B.png)![B](B.png)![S](S.png)   |   ![B](B.png)![B](B.png)![S](S.png)   |
 
 
 
