@@ -80,7 +80,7 @@ in exactly the same way as Hubs send content to Subscribers.
 |4. Subscribed To    |   ![B](B.png)![H](H.png)![B](B.png)   |   ![P](P.png)![H](H.png)![B](B.png)   |
 |5. Published To     |   ![B](B.png)![H](H.png)![B](B.png)   |   ![B](B.png)![H](H.png)![S](S.png)   |
 |6. Distributed To   |   ![B](B.png)![B](B.png)![S](S.png)   |   ![B](B.png)![H](H.png)![S](S.png)   |
-|7. Subscribed From  |   ![B](B.png)![B](B.png)![S](S.png)   |   ![B](B.png)![B](B.png)![S](S.png)   |
+|7. Subscribed From  |   ![B](B.png)![B](B.png)![S](S.png)   |   ![B](B.png)![H](H.png)![S](S.png)   |
 
 
 
