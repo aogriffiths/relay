@@ -186,6 +186,7 @@ behind Relay. In short:
 2. Publishers follow the same protocol for _publishing_ content as Hubs
    follow for _distributing_ it. 
 
+<a name="2.3"></a>
 3. Because of points 1 and 2, Hubs and Subscribers can
    subscribe to Publishers or other Hubs. i.e. there a four scenarios:
       * Hub subscribes to a Publisher.
@@ -198,6 +199,7 @@ behind Relay. In short:
    Subscriber Interface, which reduces it to one scenario: 
       * The Subscriber Interface subscribes to the Publisher Interface
 
+<a name="2.4"></a>
 4. Publishing updates happens in the reverse direction to subscribing. i.e. there 
    are four scenarios again:
       * Publisher publishes to a Hub.
@@ -281,8 +283,8 @@ Interface.
    is adhered to for Hubs to subscribe and unsubscribe to Publishers.
 
    All of section 5 is described in terms of the "Subscriber subscribes to a Hub" 
-   scenario but MUST apply equally to the other three scenarios listed in section 
-   2\. Definitions - General Concepts - point 3.
+   scenario but MUST apply equally to the other three scenarios listed in 
+   [section 2\. Definitions - General Concepts - point 3.](#2.3)
 
 3. __Common Publisher Interface:__ The documentation in section 7 of this
    specification and section 7 of the PuSH 0.4 specification describe how Hubs
@@ -290,8 +292,8 @@ Interface.
    adhered to for Publishers to Publish updates to Hubs.
 
    All of section 7 is described in terms of the "Hub publishes to a Subscriber." 
-   scenario but MUST apply equally to the other three scenarios listed in section 
-   2\. Definitions - General Concepts - point 4.
+   scenario but MUST apply equally to the other three scenarios listed in
+   [section 2\. Definitions - General Concepts - point 4.](#2.4)
 
 
 <!-- Long Spec START -->   
