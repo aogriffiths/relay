@@ -186,7 +186,7 @@ behind Relay. In short:
 2. Publishers follow the same protocol for _publishing_ content as Hubs
    follow for _distributing_ it. 
 
-3.<a name="2.3"></a>
+3. <a name="2.3"></a>
    __The Subscriber Interface:__ Because of points 1 and 2, Hubs and Subscribers can
    subscribe to Publishers or other Hubs. i.e. there a four scenarios:
 
@@ -201,7 +201,7 @@ behind Relay. In short:
 
      * The Subscriber Interface subscribes to the Publisher Interface
 
-4.<a name="2.4"></a>
+4. <a name="2.4"></a>
    __The Publisher Interface:__ Publishing updates happens in the reverse 
    direction to subscribing. i.e. there are four scenarios:
 
