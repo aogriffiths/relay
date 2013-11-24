@@ -86,13 +86,13 @@ For a full Key see section [2. Definitions - Specific Definitions](#2.SpecificDe
 
 |                    | PuSH                                  | Relay                                 |
 | ------------------ |:------------------------------------- |:------------------------------------- |
-|1. Hosts the Topic and supports Hub discovery  |   ![P](P.png)![B](B.png)![B](B.png)   |   ![P](P.png)![B](B.png)![B](B.png)   |
-|2. Published from   |   ![P](P.png)![B](B.png)![B](B.png)   |   ![P](P.png)![H](H.png)![B](B.png)   |
-|3. Distributed from |   ![B](B.png)![H](H.png)![B](B.png)   |   ![P](P.png)![H](H.png)![B](B.png)   [a]|
-|4. Subscribed to    |   ![B](B.png)![H](H.png)![B](B.png)   |   ![P](P.png)![H](H.png)![B](B.png)   |
-|5. Published to     |   ![B](B.png)![H](H.png)![B](B.png)   |   ![B](B.png)![H](H.png)![S](S.png)   [b]|
-|6. Distributed to   |   ![B](B.png)![B](B.png)![S](S.png)   |   ![B](B.png)![H](H.png)![S](S.png)   |
-|7. Subscribed from  |   ![B](B.png)![B](B.png)![S](S.png)   |   ![B](B.png)![H](H.png)![S](S.png)   |
+|1. Hosts the Topic and supports Hub discovery  | ![P](P.png)![B](B.png)![B](B.png) | ![P](P.png)![B](B.png)![B](B.png) |
+|2. Published from / "does the publishing"      | ![P](P.png)![B](B.png)![B](B.png) | ![P](P.png)![H](H.png)![B](B.png) |
+|3. Distributed from / "does the distributing"  | ![B](B.png)![H](H.png)![B](B.png) | ![P](P.png)![H](H.png)![B](B.png) [a]|
+|4. Subscribed to / "receives the subscription" | ![B](B.png)![H](H.png)![B](B.png) | ![P](P.png)![H](H.png)![B](B.png) |
+|5. Published to / "receives published updates" | ![B](B.png)![H](H.png)![B](B.png) | ![B](B.png)![H](H.png)![S](S.png) [b]|
+|6. Distributed to / "receives distributed updates" | ![B](B.png)![B](B.png)![S](S.png) | ![B](B.png)![H](H.png)![S](S.png) |
+|7. Subscribed from / "does the subscribing"    | ![B](B.png)![B](B.png)![S](S.png) | ![B](B.png)![H](H.png)![S](S.png) |
 
 #### What does this mean?
 <!-- Long Spec END -->
@@ -178,8 +178,8 @@ behind Relay. In short:
 1. Publishers can be subscribed to, just like Hubs. Hubs can be subscribed from 
    ("do the subscribing") just like Subscribers.
 
-2. Publishers follow the same protocol for _publishing_ content as Hubs
-   follow for _distributing_ it. 
+2. Publishers follow the same protocol for publishing content as Hubs
+   follow for distributing it. 
 
 3. <a name="2.3"></a>
    __The Subscriber Interface:__ Because of points 1 and 2, Hubs and Subscribers can
