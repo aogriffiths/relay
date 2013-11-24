@@ -7,7 +7,7 @@ Relay
 
 _Publish. Subscribe. Webhook. Syndicate._
 
-Go  to the [introduction](#intro) if you want to get straight to finding out how Relay works!
+Go to the [introduction](#intro) if you want to get straight to finding out how Relay works!
 
 Document Status
 ---------------
@@ -54,9 +54,9 @@ publish / subscribe and webhook pattern.
 Introduction (Informative)
 ------------------------------------------------------------------------------------------------------------------------
 
-Relay is inspired by and compatible with PubSubHubbub (PuSH). Relay and PuSH
+Relay is inspired by and compatible with PubSubHubbub (PuSH). They both
 provide a protocol for Subscribers to subscribe to a Topic which is maintained
-by a Publisher. When the Publisher has updates to that Topic they are Distributed 
+by a Publisher. When the Publisher makes updates to the Topic they are Distributed 
 ("syndicated") to all Subscribers. This is the so called "webhook" pattern
 which promotes loose coupling and the ability for Subscribers to easily register
 for and be sent updates, without the publishing system needing to be modified,
@@ -72,13 +72,12 @@ in exactly the same way as Hubs send content to Subscribers.
 What does this mean? A picture is worth a thousand words:
 
 ![Relay_PuSH](Relay_PuSH.png)
-<!-- Long Spec END -->
 
 #### Comparison to PuSH
 
 Relay is completely compatible with PuSH you can even combine the two
-to get the benefits of both. The best way to illustrate the differences is with 
-a table comparing them.
+to get the benefits of both. The comparison table below shows the similarities and 
+differences.
 
 __Key__
 
@@ -88,32 +87,34 @@ __Key__
 | ![H](H.png) | Hub        |
 | ![S](S.png) | Subscriber |
 
-__Comparison__
+__Comparison Table__
 
 |                    | PuSH                                  | Relay                                 |
 | ------------------ |:------------------------------------- |:------------------------------------- |
 |1. Hosts the Topic and supports Hub discovery  |   ![P](P.png)![B](B.png)![B](B.png)   |   ![P](P.png)![B](B.png)![B](B.png)   |
 |2. Published from   |   ![P](P.png)![B](B.png)![B](B.png)   |   ![P](P.png)![H](H.png)![B](B.png)   |
-|3. Distributed from |   ![B](B.png)![H](H.png)![B](B.png)   |   ![P](P.png)![H](H.png)![B](B.png)   (a)|
+|3. Distributed from |   ![B](B.png)![H](H.png)![B](B.png)   |   ![P](P.png)![H](H.png)![B](B.png)   [a]|
 |4. Subscribed to    |   ![B](B.png)![H](H.png)![B](B.png)   |   ![P](P.png)![H](H.png)![B](B.png)   |
-|5. Published to     |   ![B](B.png)![H](H.png)![B](B.png)   |   ![B](B.png)![H](H.png)![S](S.png)   (b)|
+|5. Published to     |   ![B](B.png)![H](H.png)![B](B.png)   |   ![B](B.png)![H](H.png)![S](S.png)   [b]|
 |6. Distributed to   |   ![B](B.png)![B](B.png)![S](S.png)   |   ![B](B.png)![H](H.png)![S](S.png)   |
 |7. Subscribed from  |   ![B](B.png)![B](B.png)![S](S.png)   |   ![B](B.png)![H](H.png)![S](S.png)   |
 
-What does this mean?
+#### What does this mean?
+<!-- Long Spec END -->
 
-1. Relay Publishers do everything PuSH Publishers do, and more. The main point
+1. Relay Publishers do everything PuSH Publishers do, and more. The main addition
 being Relay Publishers can be subscribed to (from Hubs or directly from
-Subscribers).
+Subscribers). In PuSH parlance all Relay Publishers are "their own Hubs". 
 
-2. Relay Hubs do everything PuSH Hubs do, and more. The main point being Relay
+2. Relay Hubs do everything PuSH Hubs do, and more. The main addition being Relay
 Hubs can be subscribed from (to other Hubs or to Publishers).
 
 3. Relay Subscribers do the same as PuSH Subscribers.
 
-4. In Relay To Publish and To Distribute mean the same thing which is why (a)
-Topics can be distributed from a Relay Publisher and (b) A Relay Subscriber is
-able to be published to. Publishing and Distributing become synonymous with Relay.
+4. In Relay publishing updates from a Publisher to a Hub uses the same protocol 
+as distributing updates from a Hub to a Subscriber. This is why Topics can be 
+distributed from a Relay Publisher (see [a]) and a Relay Subscriber can be 
+published to (see [b]).
 
 5. The final, and coolest part of it all, is a Relay Hub simply combines the
 Publisher and the Subscriber capabilities. It Subscribes to a Topic and re-
@@ -124,11 +125,11 @@ Topic for discovery is likely to be the subject of a Relay extension coming
 soon...)
 
 
-#### But Why?!
+#### Why Use Relay?!
 
-* __Ease of Implementation:__ Relay should be ease to implement in any
-programming language.  The approach taken encourages developers to build a
-Publisher API and a  Subscriber API. Publishers then simply use the Publisher
+* __Ease of Implementation:__ Relay is designed to be easy to implement in any
+programming language.  It encourages developers to build a
+Publisher API and a Subscriber API. Publishers then simply use the Publisher
 API, Subscribers use  the Subscriber API and Hubs use both APIs.
 
 * __Simplicity:__ All content is sent between Publishers, Subscribers and Hubs
@@ -176,25 +177,29 @@ suggestions that may help when implementing Relay.
 
 ### General Concepts (Informative)
 
-1. In PuSH parlance all Relay Publishers 
-   are "their own Hubs". 
-2. A Rely Publisher follows the same protocol for _publishing_ content as a Hub
-   follows for _distributing_ it.
-3. Building on points 1 and 2, Relay allows Hubs or Subscribers
-   to subscribe to Publishers or other Hubs. This creates four subscription 
-   scenarios:
+See the [introduction](#intro) for a more complete overview of the concepts 
+behind Relay. In short:
+ 
+1. Publishers can be subscribed to, just like Hubs. Hubs can be subscribed from 
+   ("do the subscribing") just like Subscribers.
+
+2. Publishers follow the same protocol for _publishing_ content as Hubs
+   follow for _distributing_ it. 
+
+3. Because of points 1 and 2, Hubs and Subscribers can
+   subscribe to Publishers or other Hubs. There a four scenarios:
       * Hub subscribes to a Publisher.
       * Hub subscribes to a Hub.
       * Subscriber subscribes direct to a Publisher.
       * Subscriber subscribes to a Hub.
 
-   More simply the Publisher and Hub can both be seen as having a Publisher 
-   Interface and the Hub an Subscriber can both be seen as having a 
-   Subscriber Interface, which reduces it to one scenario:
+   More simply the Publisher and Hub can both be seen as adhering to a Publisher
+   Interface and the Hub an Subscriber can both be seen as adhering to a
+   Subscriber Interface, which reduces it to one scenario: 
       * The Subscriber Interface subscribes to the Publisher Interface
 
-4. Publishing content happens in the reverse direction to subscribing. So there 
-   are four publishing scenarios:
+4. Publishing content happens in the reverse direction to subscribing. Again there 
+   are four scenarios:
       * Publisher publishes to a Hub.
       * Hub publishes to a Hub.
       * Publisher publishes direct to a Subscriber.
