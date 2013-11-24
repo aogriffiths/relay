@@ -7,7 +7,7 @@ Relay
 
 _Publish. Subscribe. Webhook. Syndicate._
 
-(Skip to the introduction if you want to find out how it works!)
+(Skip to the [introduction](#intro) if you want to find out how it works!)
 
 Document Status
 ---------------
@@ -49,6 +49,7 @@ publish / subscribe and webhook pattern.
 
 
 <br/>
+<a name="intro"></a>
 ************************************************************************************************************************
 Introduction (Informative)
 ------------------------------------------------------------------------------------------------------------------------
