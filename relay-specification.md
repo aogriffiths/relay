@@ -79,12 +79,7 @@ Relay is completely compatible with PuSH you can even combine the two
 to get the benefits of both. The comparison table below shows the similarities and 
 differences.
 
-__Comparison Table__
-
-(Key: P = A Publisher, H = A Hub, S = A Subscriber. 
-For a full Key see section [2. Definitions - Specific Definitions](#2.SpecificDefinitions))
-
-|                    | PuSH                                  | Relay                                 |
+| Capability Comparison | PuSH                                  | Relay                                 |
 | ------------------ |:------------------------------------- |:------------------------------------- |
 |1. Hosts the Topic and supports Hub discovery  | ![P](P.png)![B](B.png)![B](B.png) | ![P](P.png)![B](B.png)![B](B.png) |
 |2. Published from / "does the publishing"      | ![P](P.png)![B](B.png)![B](B.png) | ![P](P.png)![H](H.png)![B](B.png) |
@@ -93,6 +88,10 @@ For a full Key see section [2. Definitions - Specific Definitions](#2.SpecificDe
 |5. Published to / "receives published updates" | ![B](B.png)![H](H.png)![B](B.png) | ![B](B.png)![H](H.png)![S](S.png) [b]|
 |6. Distributed to / "receives distributed updates" | ![B](B.png)![B](B.png)![S](S.png) | ![B](B.png)![H](H.png)![S](S.png) |
 |7. Subscribed from / "does the subscribing"    | ![B](B.png)![B](B.png)![S](S.png) | ![B](B.png)![H](H.png)![S](S.png) |
+
+(Key: P = A Publisher, H = A Hub, S = A Subscriber. 
+For a full Key see section [2. Definitions - Specific Definitions](#2.SpecificDefinitions))
+
 
 #### What does this mean?
 <!-- Long Spec END -->
