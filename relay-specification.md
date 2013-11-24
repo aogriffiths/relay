@@ -50,13 +50,13 @@ publish / subscribe and webhook pattern.
 
 <br/>
 ************************************************************************************************************************
-Introduction
+Introduction (Informative)
 ------------------------------------------------------------------------------------------------------------------------
 
 Relay is inspired by and compatible with PubSubHubbub (PuSH). Relay and PuSH
 provide a protocol for Subscribers to subscribe to a Topic which is maintained
-by a Publisher. When the Publisher has updates to that Topic they are then sent,
-or "syndicated" to all Subscribers. This is the so called "webhook" pattern
+by a Publisher. When the Publisher has updates to that Topic they are Distributed 
+("syndicated") to all Subscribers. This is the so called "webhook" pattern
 which promotes loose coupling and the ability for Subscribers to easily register
 for and be sent updates, without the publishing system needing to be modified,
 or even be aware of who the Subscribers are.
@@ -66,23 +66,6 @@ the Hub and the Hub distributes them to Subscribers. The main extension Relay
 makes to this is to require Publishers publish content using the same protocol
 that Hubs use to distribute it. In other words Publishers sends content to Hubs
 in exactly the same way as Hubs send content to Subscribers. 
-
-![B](B.png)
-![P](P.png)
-![H](H.png)
-![S](S.png)
-
-|                    | PuSH                                  | Relay                                 |
-| ------------------ |:------------------------------------- |:------------------------------------- |
-|1. Hosts the Topic  |   ![P](P.png)![B](B.png)![B](B.png)   |   ![P](P.png)![B](B.png)![B](B.png)   |
-|2. Published From   |   ![P](P.png)![B](B.png)![B](B.png)   |   ![P](P.png)![H](H.png)![B](B.png)   |
-|3. Distributed From |   ![B](B.png)![H](H.png)![B](B.png)   |   ![P](P.png)![H](H.png)![B](B.png)   |
-|4. Subscribed To    |   ![B](B.png)![H](H.png)![B](B.png)   |   ![P](P.png)![H](H.png)![B](B.png)   |
-|5. Published To     |   ![B](B.png)![H](H.png)![B](B.png)   |   ![B](B.png)![H](H.png)![S](S.png)   |
-|6. Distributed To   |   ![B](B.png)![B](B.png)![S](S.png)   |   ![B](B.png)![H](H.png)![S](S.png)   |
-|7. Subscribed From  |   ![B](B.png)![B](B.png)![S](S.png)   |   ![B](B.png)![H](H.png)![S](S.png)   |
-
-
 
 <!-- Long Spec START -->
 What does this mean? A picture is worth a thousand words:
@@ -100,6 +83,37 @@ The benefits are:
   can be created for "_relaying_" content. (Useful for load balancing or 
   traversing public and private networks.)
 
+Comparison to PuSH
+
+Relay is completely compatible with PuSH you can even combine the two
+to get the benefits of both. (Befits of PuSH include it's flexible as to how 
+Publishers publish Topics to Hubs and wide support in many existing web feeds.) 
+
+The best way to illustrate the differences is with a table comparing them:
+
+Key
+| Symbol      | Meaning    | 
+| ----------- | ---------- | 
+| ![P](P.png) | Publisher  |
+| ![H](H.png) | Hub        |
+| ![S](S.png) | Subscriber |
+
+|                    | PuSH                                  | Relay                                 |
+| ------------------ |:------------------------------------- |:------------------------------------- |
+|1. Hosts the Topic and supports Hub Discovery  |   ![P](P.png)![B](B.png)![B](B.png)   |   ![P](P.png)![B](B.png)![B](B.png)   |
+|2. Published From   |   ![P](P.png)![B](B.png)![B](B.png)   |   ![P](P.png)![H](H.png)![B](B.png)   |
+|3. Distributed From |   ![B](B.png)![H](H.png)![B](B.png)   |   ![P](P.png)![H](H.png)![B](B.png)   (a)|
+|4. Subscribed To    |   ![B](B.png)![H](H.png)![B](B.png)   |   ![P](P.png)![H](H.png)![B](B.png)   |
+|5. Published To     |   ![B](B.png)![H](H.png)![B](B.png)   |   ![B](B.png)![H](H.png)![S](S.png)   (b)|
+|6. Distributed To   |   ![B](B.png)![B](B.png)![S](S.png)   |   ![B](B.png)![H](H.png)![S](S.png)   |
+|7. Subscribed From  |   ![B](B.png)![B](B.png)![S](S.png)   |   ![B](B.png)![H](H.png)![S](S.png)   |
+
+What does this mean?
+
+1. Relay Publishers can do everything a PuSH Publisher do. Likewise for Relay Hubs can do the same as PuSH Hubs and Relay Subscribers do the same as PuSH Subscribers.
+2. In Relay To Publish and To Distribute mean the same thing which is why (a) a Relay Publisher is indicated as able to Distribute content and (b) A Relay Subscriber is indicated as able to be published to.
+3. Relay Publishers can always be Subscribed to. Arguable PuSH supports this too because PuSH Publishers must always have Hubs. However Relay goes further and specifies that Hubs to subscribe to Publishers using the same protocol as Subscribers subscribe to Publishers.
+4. The final, and coolest part of it all, is a Relay Hub simply combines the Publisher and the Subscriber capabilities. It Subscribes to a Topic and re-publishes (or "relays") it. There is only one exception to this rule, a Relay Hub does not need to host the Topic for discovery, that is left to be the role of the original Publisher alone (However the idea of having a Hub represent a Topic is likely to be the subject of a Relay extension coming soon...)
 
 <br/>
 <a name="1."></a>
