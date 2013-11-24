@@ -243,18 +243,19 @@ distributes them to Subscribers.
 
 ##### Relay Interfaces and Actions
 
-* __The Publisher Interface:__ (_noun_). The interface that includes:
-   1. Everything a PuSH Hub does to Distribute Topic changes.
-   2. Everything a PuSH Hub does to accept Subscription requests.
-
-Symbol: ![PI](PI.png)
+* __The Publisher Interface:__ (_noun_). 
+  The interface that includes:
+     1. Everything a PuSH Hub does to Distribute Topic changes.
+     2. Everything a PuSH Hub does to accept Subscription requests.
+  
+  ![PI](PI.png)
 
 * __The Subscriber Interface:__ (_noun_). 
   The interface that includes:
      1. Everything a PuSH Subscriber does to receive Distributed topics changes.
      2. Everything a PuSH Subscriber does to make Subscription requests.
   
-  Symbol: ![SI](SI.png)  
+  ![SI](SI.png)  
 
 * __To Publish:__ (_verb_). The action performed by a Publisher Interface 
   to send Topic changes to a Subscriber Interface. (Combines the PuSH concepts 
