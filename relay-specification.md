@@ -122,19 +122,25 @@ of the original Publisher alone (However the idea of having a Hub represent a
 Topic for discovery is likely to be the subject of a Relay extension coming 
 soon...)
 
+
 #### But Why?!
-* __Implementations:__ We want Relay to be widely implemented in many languages. 
-The approach taken encourages developers to build one Publisher API and one 
-Subscriber API. Publishers then simply use the Publisher API, Subscribers use 
-the Subscriber API and Hubs use both.
-* __Simplicity:__ All content is sent between Publishers, Subscribers and Hubs 
-  using the same protocol.
+
+* __Ease of Implementation:__ Relay should be ease to implement in any
+programming language.  The approach taken encourages developers to build a
+Publisher API and a  Subscriber API. Publishers then simply use the Publisher
+API, Subscribers use  the Subscriber API and Hubs use both APIs.
+
+* __Simplicity:__ All content is sent between Publishers, Subscribers and Hubs
+using the same protocol.
+
 * __Compatibility:__ Relay is compatible with PuSH v0.4.
-* __No Hub:__ You don't need to use a Hub. Publishers 
-  can send updates directly to Subscribers.
-* __Many Hubs:__ Hubs can send updates to other Hubs so a chain of Hubs 
-  can be created for "_relaying_" content. (Useful for load balancing or 
-  traversing public and private networks.)
+
+* __No Hub:__ You don't need to use a Hub. Publishers can send updates
+directly to Subscribers.
+
+* __Many Hubs:__ Hubs can send updates to other Hubs so a chain of Hubs can
+be created for "_relaying_" content. (Useful for load balancing or traversing
+public and private networks.)
 
 <br/>
 <a name="1."></a>
