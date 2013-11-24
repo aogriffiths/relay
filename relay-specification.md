@@ -54,17 +54,17 @@ publish / subscribe and webhook pattern.
 Introduction (Informative)
 ------------------------------------------------------------------------------------------------------------------------
 
-Relay is inspired by and compatible with PubSubHubbub (PuSH). They both
-provide a protocol for Subscribers to subscribe to a Topic which is maintained
-by a Publisher. When the Publisher makes updates to the Topic they are Distributed 
-("syndicated") to all Subscribers. This is the so called "webhook" pattern
-which promotes loose coupling and the ability for Subscribers to easily register
-for and be sent updates, without the publishing system needing to be modified,
-or even be aware of who the Subscribers are.
+Relay is inspired by and compatible with PubSubHubbub (PuSH). They both provide
+a protocol for Subscribers to subscribe to a Topic which is maintained by a
+Publisher. Updates to the Topic are Distributed  ("syndicated") to all
+Subscribers. This is the so called "webhook" pattern which promotes loose
+coupling and the ability for Subscribers to easily register for and be sent
+updates, without the publishing system needing to be modified, or even be aware
+of who the Subscribers are.
 
 PuSH achieves the pattern by introducing a Hub. Publishers publish updates to
 the Hub and the Hub distributes them to Subscribers. The main extension Relay
-makes to this is to require Publishers publish content using the same protocol
+makes is to require Publishers publish content using the same protocol
 that Hubs use to distribute it. In other words Publishers sends content to Hubs
 in exactly the same way as Hubs send content to Subscribers. 
 
@@ -113,12 +113,12 @@ Hubs can be subscribed from (to other Hubs or to Publishers).
 
 4. In Relay publishing updates from a Publisher to a Hub uses the same protocol 
 as distributing updates from a Hub to a Subscriber. This is why Topics can be 
-distributed from a Relay Publisher (see [a]) and a Relay Subscriber can be 
-published to (see [b]).
+distributed from a Relay Publisher (see [a] above) and a Relay Subscriber can be 
+published to (see [b] above).
 
 5. The final, and coolest part of it all, is a Relay Hub simply combines the
-Publisher and the Subscriber capabilities. It Subscribes to a Topic and re-
-publishes or "relays" it. There is only one exception to this rule, a Relay
+Publisher and the Subscriber capabilities. It Subscribes to a Topic and 
+re-publishes or "relays" it. There is only one exception to this rule, a Relay
 Hub does not need to host the Topic for discovery, that is left to be the role
 of the original Publisher alone (However the idea of having a Hub represent a
 Topic for discovery is likely to be the subject of a Relay extension coming 
@@ -127,7 +127,7 @@ soon...)
 
 #### Why Use Relay?!
 
-* __Ease of Implementation:__ Relay is designed to be easy to implement in any
+* __Ease of Implementation:__ It is designed to be easy to implement in any
 programming language.  It encourages developers to build a
 Publisher API and a Subscriber API. Publishers then simply use the Publisher
 API, Subscribers use  the Subscriber API and Hubs use both APIs.
@@ -141,8 +141,8 @@ using the same protocol.
 directly to Subscribers.
 
 * __Many Hubs:__ Hubs can send updates to other Hubs so a chain of Hubs can
-be created for "_relaying_" content. (Useful for load balancing or traversing
-public and private networks.)
+be created, which is useful for load balancing or traversing public and private 
+networks.
 
 <br/>
 <a name="1."></a>
@@ -187,7 +187,7 @@ behind Relay. In short:
    follow for _distributing_ it. 
 
 3. Because of points 1 and 2, Hubs and Subscribers can
-   subscribe to Publishers or other Hubs. There a four scenarios:
+   subscribe to Publishers or other Hubs. i.e. there a four scenarios:
       * Hub subscribes to a Publisher.
       * Hub subscribes to a Hub.
       * Subscriber subscribes direct to a Publisher.
@@ -198,8 +198,8 @@ behind Relay. In short:
    Subscriber Interface, which reduces it to one scenario: 
       * The Subscriber Interface subscribes to the Publisher Interface
 
-4. Publishing content happens in the reverse direction to subscribing. Again there 
-   are four scenarios:
+4. Publishing updates happens in the reverse direction to subscribing. i.e. there 
+   are four scenarios again:
       * Publisher publishes to a Hub.
       * Hub publishes to a Hub.
       * Publisher publishes direct to a Subscriber.
@@ -272,26 +272,26 @@ Interface.
 <!-- Long Spec End -->
 
 1. __Relay / PuSH Compatibility:__ The protocol for Relay follows the PuSH
-protocol and is outlined in sections 4 to 8. (note Section 3 to 8 of this
-specification broadly map to sections 3 to 8 of the PuSH v0.4 specification.)
+   protocol and is outlined in sections 4 to 8. (note Section 3 to 8 of this
+   specification broadly map to sections 3 to 8 of the PuSH v0.4 specification.)
 
 2. __Common Subscriber Interface:__ The documentation in section 5 of this
-specification and section 5 of the PuSH 0.4 specification describe how
-Subscribers subscribe and unsubscribe to Hubs. Relay requires the same protocol
-is adhered to for Hubs to subscribe and unsubscribe to Publishers.
+   specification and section 5 of the PuSH 0.4 specification describe how
+   Subscribers subscribe and unsubscribe to Hubs. Relay requires the same protocol
+   is adhered to for Hubs to subscribe and unsubscribe to Publishers.
 
-All of section 5 is described in terms of the "Subscriber subscribes to a Hub" 
-scenario but MUST apply equally to the other three scenarios listed in section 
-2. Definitions - General Concepts - point 3.
+   All of section 5 is described in terms of the "Subscriber subscribes to a Hub" 
+   scenario but MUST apply equally to the other three scenarios listed in section 
+   2. Definitions - General Concepts - point 3.
 
 3. __Common Publisher Interface:__ The documentation in section 7 of this
-specification and section 7 of the PuSH 0.4 specification describe how Hubs
-Distribute updates to Subscribers. Relay requires the same protocol is
-adhered to for Publishers to Publish updates to Hubs.
+   specification and section 7 of the PuSH 0.4 specification describe how Hubs
+   Distribute updates to Subscribers. Relay requires the same protocol is
+   adhered to for Publishers to Publish updates to Hubs.
 
-All of section 7 is described in terms of the "Hub publishes to a Subscriber." 
-scenario but MUST apply equally to the other three scenarios listed in section 
-2. Definitions - General Concepts - point 4.
+   All of section 7 is described in terms of the "Hub publishes to a Subscriber." 
+   scenario but MUST apply equally to the other three scenarios listed in section 
+   2. Definitions - General Concepts - point 4.
 
 
 <!-- Long Spec START -->   
@@ -405,7 +405,7 @@ the the top few Entries in the Topic.)
    header returned by a Publisher is their own Hub URL. Publishers MAY choose
    not to do this if they are no longer accepting direct subscriptions but MUST
    always return at least one Hub URL, referring to a Hub that they are
-   actively distributing content to.
+   actively distributing updates to.
 
 5. __Publishers Fall Back:__ Relay Publishers MAY OPTIONALLY provide the other
    methods methods of discovery refereed to in the PuSH 0.3 and PuSH 0.4
