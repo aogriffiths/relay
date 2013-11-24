@@ -282,7 +282,7 @@ Interface.
 
    All of section 5 is described in terms of the "Subscriber subscribes to a Hub" 
    scenario but MUST apply equally to the other three scenarios listed in section 
-   2. Definitions - General Concepts - point 3.
+   2\. Definitions - General Concepts - point 3.
 
 3. __Common Publisher Interface:__ The documentation in section 7 of this
    specification and section 7 of the PuSH 0.4 specification describe how Hubs
@@ -291,7 +291,7 @@ Interface.
 
    All of section 7 is described in terms of the "Hub publishes to a Subscriber." 
    scenario but MUST apply equally to the other three scenarios listed in section 
-   2. Definitions - General Concepts - point 4.
+   2\. Definitions - General Concepts - point 4.
 
 
 <!-- Long Spec START -->   
