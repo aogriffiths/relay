@@ -79,15 +79,13 @@ Relay is completely compatible with PuSH you can even combine the two
 to get the benefits of both. The comparison table below shows the similarities and 
 differences.
 
-__Key__
-
-
 __Comparison Table__
+
+(Key: P = A Publisher, H = A Hub, S = A Subscriber. For a full Key see section [2. Definitions](#2.))
 
 |                    | PuSH                                  | Relay                                 |
 | ------------------ |:------------------------------------- |:------------------------------------- |
-|1. Hosts the Topic and supports Hub discovery  
-                     |   ![P](P.png)![B](B.png)![B](B.png)   |   ![P](P.png)![B](B.png)![B](B.png)   |
+|1. Hosts the Topic and supports Hub discovery  |   ![P](P.png)![B](B.png)![B](B.png)   |   ![P](P.png)![B](B.png)![B](B.png)   |
 |2. Published from   |   ![P](P.png)![B](B.png)![B](B.png)   |   ![P](P.png)![H](H.png)![B](B.png)   |
 |3. Distributed from |   ![B](B.png)![H](H.png)![B](B.png)   |   ![P](P.png)![H](H.png)![B](B.png)   [a]|
 |4. Subscribed to    |   ![B](B.png)![H](H.png)![B](B.png)   |   ![P](P.png)![H](H.png)![B](B.png)   |
