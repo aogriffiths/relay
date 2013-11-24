@@ -92,11 +92,13 @@ Publishers publish Topics to Hubs and wide support in many existing web feeds.)
 The best way to illustrate the differences is with a table comparing them:
 
 Key
+
 | Symbol      | Meaning    | 
 | ----------- | ---------- | 
 | ![P](P.png) | Publisher  |
 | ![H](H.png) | Hub        |
 | ![S](S.png) | Subscriber |
+
 
 |                    | PuSH                                  | Relay                                 |
 | ------------------ |:------------------------------------- |:------------------------------------- |
