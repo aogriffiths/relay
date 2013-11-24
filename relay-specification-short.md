@@ -68,25 +68,13 @@ that Hubs use to distribute it. In other words Publishers sends content to Hubs
 in exactly the same way as Hubs send content to Subscribers. 
 
 
-The benefits are:
-* __Simplicity:__ All content is sent between Publishers, Subscribers and Hubs 
-  using the same protocol.
-* __Compatibility:__ Relay is compatible with PuSH v0.4.
-* __No Hub Required:__ You don't need to use a Hub. Publishers 
-  can send updates directly to Subscribers.
-* __Many Hubs Possible:__ Hubs can send updates to other Hubs so a chain of Hubs 
-  can be created for "_relaying_" content. (Useful for load balancing or 
-  traversing public and private networks.)
-
-Comparison to PuSH
+#### Comparison to PuSH
 
 Relay is completely compatible with PuSH you can even combine the two
-to get the benefits of both. (Befits of PuSH include it's flexible as to how 
-Publishers publish Topics to Hubs and wide support in many existing web feeds.) 
+to get the benefits of both. The best way to illustrate the differences is with 
+a table comparing them.
 
-The best way to illustrate the differences is with a table comparing them:
-
-Key
+__Key__
 
 | Symbol      | Meaning    | 
 | ----------- | ---------- | 
@@ -94,6 +82,7 @@ Key
 | ![H](H.png) | Hub        |
 | ![S](S.png) | Subscriber |
 
+__Comparison__
 
 |                    | PuSH                                  | Relay                                 |
 | ------------------ |:------------------------------------- |:------------------------------------- |
@@ -107,11 +96,40 @@ Key
 
 What does this mean?
 
-1. Relay Publishers do everything PuSH Publishers do, and more. The main point being Relay Publishers can be subscribed to (from Hubs or directly from Subscribers).
-2. Relay Hubs do everything PuSH Hubs do, and more. The main point being Relay Hubs can be subscribed from (to other Hubs or to Publishers).
+1. Relay Publishers do everything PuSH Publishers do, and more. The main point
+being Relay Publishers can be subscribed to (from Hubs or directly from
+Subscribers).
+
+2. Relay Hubs do everything PuSH Hubs do, and more. The main point being Relay
+Hubs can be subscribed from (to other Hubs or to Publishers).
+
 3. Relay Subscribers do the same as PuSH Subscribers.
-4. In Relay To Publish and To Distribute mean the same thing which is why (a) Topics can be distributed from a Relay Publisher and (b) A Relay Subscriber is able to be published to. Publishing and Distributing are synonymous with Relay.
-5. The final, and coolest part of it all, is a Relay Hub simply combines the Publisher and the Subscriber capabilities. It Subscribes to a Topic and re-publishes (or "relays") it. There is only one exception to this rule, a Relay Hub does not need to host the Topic for discovery, that is left to be the role of the original Publisher alone (However the idea of having a Hub represent a Topic is likely to be the subject of a Relay extension coming soon...)
+
+4. In Relay To Publish and To Distribute mean the same thing which is why (a)
+Topics can be distributed from a Relay Publisher and (b) A Relay Subscriber is
+able to be published to. Publishing and Distributing become synonymous with Relay.
+
+5. The final, and coolest part of it all, is a Relay Hub simply combines the
+Publisher and the Subscriber capabilities. It Subscribes to a Topic and re-
+publishes or "relays" it. There is only one exception to this rule, a Relay
+Hub does not need to host the Topic for discovery, that is left to be the role
+of the original Publisher alone (However the idea of having a Hub represent a
+Topic for discovery is likely to be the subject of a Relay extension coming 
+soon...)
+
+#### But Why?!
+* __Implementations:__ We want Relay to be widely implemented in many languages. 
+The approach taken encourages developers to build one Publisher API and one 
+Subscriber API. Publishers then simply use the Publisher API, Subscribers use 
+the Subscriber API and Hubs use both.
+* __Simplicity:__ All content is sent between Publishers, Subscribers and Hubs 
+  using the same protocol.
+* __Compatibility:__ Relay is compatible with PuSH v0.4.
+* __No Hub:__ You don't need to use a Hub. Publishers 
+  can send updates directly to Subscribers.
+* __Many Hubs:__ Hubs can send updates to other Hubs so a chain of Hubs 
+  can be created for "_relaying_" content. (Useful for load balancing or 
+  traversing public and private networks.)
 
 <br/>
 <a name="1."></a>
