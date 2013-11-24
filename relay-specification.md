@@ -101,18 +101,16 @@ being Relay Publishers can be subscribed to (from Hubs or directly from
 Subscribers). In PuSH parlance all Relay Publishers are "their own Hubs". 
 
 2. Relay Hubs do everything PuSH Hubs do, and more. The main addition being Relay
-Hubs can be subscribed from (to other Hubs or to Publishers).
+Hubs can be subscribed from / "do the subscribing" (to other Hubs or to Publishers).
 
 3. Relay Subscribers do the same as PuSH Subscribers.
 
 4. In Relay publishing updates from a Publisher to a Hub uses the same protocol 
-as distributing updates from a Hub to a Subscriber. This is why Topics can be 
-distributed from a Relay Publisher (see [a] above) and a Relay Subscriber can be 
-published to (see [b] above).
+as distributing updates from a Hub to a Subscriber. (The differences between Relay and PuSH noted [a] and [b] above are just a reflection of publishing and distributing being the same protocol).
 
-5. The final, and coolest part of it all, is a Relay Hub simply combines the
+5. The final, and coolest part of it all, is a Relay Hub simply combines 
 Publisher and the Subscriber capabilities. It Subscribes to a Topic and 
-re-publishes or "relays" it. There is only one exception to this rule, a Relay
+re-publishes or "relays" it. The only exception to this rule is that a Relay
 Hub does not need to host the Topic for discovery, that is left to be the role
 of the original Publisher alone (However the idea of having a Hub represent a
 Topic for discovery is likely to be the subject of a Relay extension coming 
@@ -124,7 +122,7 @@ soon...)
 * __Ease of Implementation:__ It is designed to be easy to implement in any
 programming language.  It encourages developers to build a
 Publisher API and a Subscriber API. Publishers then simply use the Publisher
-API, Subscribers use  the Subscriber API and Hubs use both APIs.
+API, Subscribers use the Subscriber API and Hubs can be built by combining both APIs.
 
 * __Simplicity:__ All content is sent between Publishers, Subscribers and Hubs
 using the same protocol.
@@ -174,34 +172,35 @@ suggestions that may help when implementing Relay.
 See the [introduction](#intro) for a more complete overview of the concepts 
 behind Relay. In short:
  
-1. Publishers can be subscribed to, just like Hubs. Hubs can be subscribed from 
-   ("do the subscribing") just like Subscribers.
+1. __"Hub Publishers":__ Publishers can be subscribed to, just like Hubs. 
 
-2. Publishers follow the same protocol for publishing content as Hubs
+2. __"Subscriber Hubs":__  Hubs can be subscribed from ("do the subscribing") just like Subscribers.
+
+2. __Publishing protocol = Distributing protocol:__ Publishers follow the same protocol for publishing content as Hubs
    follow for distributing it. 
 
 3. <a name="2.3"></a>
-   __The Subscriber Interface:__ Because of points 1 and 2, Hubs and Subscribers can
+   __Subscribing:__ A consequence of points 1 and 2 is that Hubs and Subscribers can
    subscribe to Publishers or other Hubs. i.e. there a four scenarios:
      * Hub subscribes to a Publisher.
      * Hub subscribes to a Hub.
      * Subscriber subscribes direct to a Publisher.
      * Subscriber subscribes to a Hub.
 
-   More simply the Publisher and Hub can both be seen as adhering to a Publisher
-   Interface and the Hub an Subscriber can both be seen as adhering to a
-   Subscriber Interface, which reduces it to one scenario: 
+   More simply, if a Publisher and Hub are both be seen as having the Publisher
+   Interface and the Hub an Subscriber are both be seen as having the Subscriber 
+   Interface, there is one scenario: 
      * The Subscriber Interface subscribes to the Publisher Interface
 
 4. <a name="2.4"></a>
-   __The Publisher Interface:__ Publishing updates happens in the reverse 
+   __Publishing:__ Publishing updates happens in the reverse 
    direction to subscribing. i.e. there are four scenarios:
       * Publisher publishes to a Hub.
       * Hub publishes to a Hub.
       * Publisher publishes direct to a Subscriber.
       * Hub publishes to a Subscriber.
 
-  Or more simply:
+   Or more simply: 
       * The Publisher Interface publishes to the Subscriber Interface
 
 <a name="2.SpecificDefinitions"></a>
