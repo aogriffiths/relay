@@ -7,7 +7,7 @@ Relay
 
 _Publish. Subscribe. Webhook. Syndicate._
 
-(Skip to the [introduction](#intro) if you want to find out how it works!)
+Go  to the [introduction](#intro) if you want to get straight to finding out how Relay works!
 
 Document Status
 ---------------
