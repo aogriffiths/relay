@@ -227,12 +227,12 @@ points as they relate to Relay.
 
 * __Publisher:__ (_noun_). The entity that masters all updates to a Topic and
 makes them available using the PuSH/Relay protocols.   
-Symbol: ![P](P.png)
+![P](P.png)
 * __Hub:__ An entity that receives updates to a Topic from a Publisher and 
 distributes them to Subscribers.   
-Symbol: ![H](H.png)
+![H](H.png)
 * __Subscriber:__ (_noun_). An entity that receives updates to a Topic.   
-Symbol: ![S](S.png)
+![S](S.png)
 * __To Publish:__ (_verb_). The action a Publisher takes to notify Hubs of changes 
   to a Topic.
 * __To Distribute:__ (_verb_). The action a Hub takes to notify Subscribers of 
@@ -252,7 +252,7 @@ Symbol: ![PI](PI.png)
 * __The Subscriber Interface:__ (_noun_). The interface that includes:
    1. Everything a PuSH Subscriber does to receive Distributed topics changes.
    2. Everything a PuSH Subscriber does to make Subscription requests.
-Symbol: ![SI](SI.png)  
+   Symbol: ![SI](SI.png)  
 
 * __To Publish:__ (_verb_). The action performed by a Publisher Interface 
   to send Topic changes to a Subscriber Interface. (Combines the PuSH concepts 
