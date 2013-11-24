@@ -7,7 +7,7 @@ Relay
 
 _Publish. Subscribe. Webhook. Syndicate._
 
-Go to the [introduction](#intro) if you want to get straight to finding out how Relay works!
+See the [introduction](#intro) to get straight to how Relay works!
 
 Document Status
 ---------------
@@ -44,7 +44,7 @@ Abstract
 ------------------------------------------------------------------------------------------------------------------------
 
 This document specifies "Relay" - a protocol for syndicating content following a
-publish / subscribe and webhook pattern.
+publish / subscribe and webhook patterns.
 
 
 
@@ -56,16 +56,16 @@ Introduction (Informative)
 
 Relay is inspired by and compatible with PubSubHubbub (PuSH). They both provide
 a protocol for Subscribers to subscribe to a Topic which is maintained by a
-Publisher. Updates to the Topic are Distributed  ("syndicated") to all
+Publisher. Updates to the Topic are published / distributed (aka "syndicated") to all
 Subscribers. This is the so called "webhook" pattern which promotes loose
-coupling and the ability for Subscribers to easily register for and be sent
-updates, without the publishing system needing to be modified, or even be aware
-of who the Subscribers are.
+coupling and allows Subscribers to easily register for, and be sent
+updates, without the publishing system needing to be modified or even be aware
+the Subscribers exist.
 
 PuSH achieves the pattern by introducing a Hub. Publishers publish updates to
 the Hub and the Hub distributes them to Subscribers. The main extension Relay
-makes is to require Publishers publish content using the same protocol
-that Hubs use to distribute it. In other words Publishers sends content to Hubs
+makes to PuSH is to require Publishers publish content using the same protocol
+that Hubs use to distribute it. In other words Publishers send content to Hubs
 in exactly the same way as Hubs send content to Subscribers. 
 
 <!-- Long Spec START -->
@@ -81,17 +81,13 @@ differences.
 
 __Key__
 
-| Symbol      | Meaning    | 
-| ----------- | ---------- | 
-| ![P](P.png) | Publisher  |
-| ![H](H.png) | Hub        |
-| ![S](S.png) | Subscriber |
 
 __Comparison Table__
 
 |                    | PuSH                                  | Relay                                 |
 | ------------------ |:------------------------------------- |:------------------------------------- |
-|1. Hosts the Topic and supports Hub discovery  |   ![P](P.png)![B](B.png)![B](B.png)   |   ![P](P.png)![B](B.png)![B](B.png)   |
+|1. Hosts the Topic and supports Hub discovery  
+                     |   ![P](P.png)![B](B.png)![B](B.png)   |   ![P](P.png)![B](B.png)![B](B.png)   |
 |2. Published from   |   ![P](P.png)![B](B.png)![B](B.png)   |   ![P](P.png)![H](H.png)![B](B.png)   |
 |3. Distributed from |   ![B](B.png)![H](H.png)![B](B.png)   |   ![P](P.png)![H](H.png)![B](B.png)   [a]|
 |4. Subscribed to    |   ![B](B.png)![H](H.png)![B](B.png)   |   ![P](P.png)![H](H.png)![B](B.png)   |
@@ -202,14 +198,13 @@ behind Relay. In short:
 4. <a name="2.4"></a>
    __The Publisher Interface:__ Publishing updates happens in the reverse 
    direction to subscribing. i.e. there are four scenarios:
-
       * Publisher publishes to a Hub.
       * Hub publishes to a Hub.
       * Publisher publishes direct to a Subscriber.
       * Hub publishes to a Subscriber.
 
   Or more simply:
-  * The Publisher Interface publishes to the Subscriber Interface
+      * The Publisher Interface publishes to the Subscriber Interface
 
 ### Specific Definitions (Normative)
 
@@ -230,10 +225,13 @@ These are defined by PuSH and the following definitions provide the salient
 points as they relate to Relay.
 
 * __Publisher:__ (_noun_). The entity that masters all updates to a Topic and
-  makes them available using the PuSH/Relay protocols.
+  makes them available using the PuSH/Relay protocols. 
+  Symbol: ![P](P.png)
 * __Hub:__ An entity that receives updates to a Topic from a Publisher and 
   distributes them to Subscribers. 
+  Symbol: ![H](H.png)
 * __Subscriber:__ (_noun_). An entity that receives updates to a Topic.
+  Symbol: ![S](S.png)
 * __To Publish:__ (_verb_). The action a Publisher takes to notify Hubs of changes 
   to a Topic.
 * __To Distribute:__ (_verb_). The action a Hub takes to notify Subscribers of 
@@ -247,9 +245,13 @@ points as they relate to Relay.
 * __The Publisher Interface:__ (_noun_). The interface that includes:
    1. Everything a PuSH Hub does to Distribute Topic changes.
    2. Everything a PuSH Hub does to accept Subscription requests.
+   
+   Symbol: ![PI](PI.png)
 * __The Subscriber Interface:__ (_noun_). The interface that includes:
    1. Everything a PuSH Subscriber does to receive Distributed topics changes.
    2. Everything a PuSH Subscriber does to make Subscription requests.
+
+   Symbol: ![SI](SI.png)
 * __To Publish:__ (_verb_). The action performed by a Publisher Interface 
   to send Topic changes to a Subscriber Interface. (Combines the PuSH concepts 
   "To Publish" and "To Distribute" into a single concept.)
@@ -278,7 +280,7 @@ Interface.
    protocol and is outlined in sections 4 to 8. (note Section 3 to 8 of this
    specification broadly map to sections 3 to 8 of the PuSH v0.4 specification.)
 
-2. __Common Subscriber Interface:__ The documentation in section 5 of this
+2. __Common Subscription Protocol:__ The documentation in section 5 of this
    specification and section 5 of the PuSH 0.4 specification describe how
    Subscribers subscribe and unsubscribe to Hubs. Relay requires the same protocol
    is adhered to for Hubs to subscribe and unsubscribe to Publishers.
@@ -287,7 +289,7 @@ Interface.
    scenario but MUST apply equally to the other three scenarios listed in 
    [section 2\. Definitions - General Concepts - point 3.](#2.3)
 
-3. __Common Publisher Interface:__ The documentation in section 7 of this
+3. __Common Publisher Protocol:__ The documentation in section 7 of this
    specification and section 7 of the PuSH 0.4 specification describe how Hubs
    Distribute updates to Subscribers. Relay requires the same protocol is
    adhered to for Publishers to Publish updates to Hubs.
@@ -328,7 +330,7 @@ the protocol for Content Distribution).
 * __[8. Authenticated Content Distribution ](#8.)__ - 
 
 
-#### PuSH v0.4 Specification (Informative, for Reference)
+#### PuSH v0.4 Specification (Informative, for reference)
 
 ![66](66.png)
 > 3\. High-level protocol flow
@@ -421,7 +423,7 @@ the the top few Entries in the Topic.)
    supporting PuSH 0.3 Publishers.
 
 <!-- Long Spec START -->
-#### PuSH v0.4 Specification (Informative, for Reference)
+#### PuSH v0.4 Specification (Informative, for reference)
 
 ![66](66.png)
 > 4\. Discovery
@@ -509,7 +511,7 @@ in conjunction with the PuSH specification:
      denying, which is referred to in section 5.2 in the PuSH 0.4 specification.
 -->
 
-#### PuSH v0.4 Specification (Informative, for Reference)
+#### PuSH v0.4 Specification (Informative, for reference)
 
 ![66](66.png)
 > 5\. Subscribing and Unsubscribing
@@ -590,7 +592,7 @@ This is an example and error codes could be any 4xx or 5xx.
     * `hub.secret` is present and is alphanumeric
 
 <!-- Long Spec START -->
-#### PuSH v0.4 Specification (Informative, for Reference)
+#### PuSH v0.4 Specification (Informative, for reference)
 
 ![66](66.png)
 > 5\.1\.  Subscriber Sends Subscription Request
@@ -740,7 +742,7 @@ and he Publisher to make additional checks are not defined in this specification
 
 
 <!-- Long Spec START -->
-#### PuSH v0.4 Specification (Informative, for Reference)
+#### PuSH v0.4 Specification (Informative, for reference)
 
 ![66](66.png) 
 
@@ -816,7 +818,7 @@ _The Publisher verifies the intent of the Subscriber_
    v0.4 specification.
 
 <!-- Long Spec START -->
-#### PuSH v0.4 Specification (Informative, for Reference)
+#### PuSH v0.4 Specification (Informative, for reference)
 
 ![66](66.png)
 > 5\.3\.  Hub Verifies Intent of the Subscriber
@@ -964,7 +966,7 @@ See section [7. Content Distribution](#7.)
 1. Adhere to section [7. Content Distribution](#7.) 
 
 <!-- Long Spec START -->
-#### PuSH v0.4 Specification (Informative, for Reference)
+#### PuSH v0.4 Specification (Informative, for reference)
 
 ![66](66.png)
 > 6\.  Publishing
@@ -1026,7 +1028,7 @@ Subscriber Response (success):
    resubscribe, ignore the request, etc).
 
 <!-- Long Spec START -->
-#### PuSH v0.4 Specification (Informative, for Reference)
+#### PuSH v0.4 Specification (Informative, for reference)
 
 ![66](66.png) 
 > 7\.  Content Distribution
@@ -1071,7 +1073,7 @@ _The Hub signs content distribution requests_
 1. Adhere to section 8 "Authenticated Content Distribution" of the PuSH v0.4 specification.
 
 <!-- Long Spec START -->
-#### PuSH v0.4 Specification (Informative, for Reference)
+#### PuSH v0.4 Specification (Informative, for reference)
 
 ![66](66.png) 
 > 8\.  Authenticated Content Distribution
