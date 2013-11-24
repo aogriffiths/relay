@@ -253,6 +253,7 @@ Symbol: ![PI](PI.png)
   The interface that includes:
      1. Everything a PuSH Subscriber does to receive Distributed topics changes.
      2. Everything a PuSH Subscriber does to make Subscription requests.
+  
   Symbol: ![SI](SI.png)  
 
 * __To Publish:__ (_verb_). The action performed by a Publisher Interface 
