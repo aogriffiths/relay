@@ -252,13 +252,12 @@ Symbol: ![PI](PI.png)
 * __The Subscriber Interface:__ (_noun_). The interface that includes:
    1. Everything a PuSH Subscriber does to receive Distributed topics changes.
    2. Everything a PuSH Subscriber does to make Subscription requests.
-
 Symbol: ![SI](SI.png)  
 
 * __To Publish:__ (_verb_). The action performed by a Publisher Interface 
   to send Topic changes to a Subscriber Interface. (Combines the PuSH concepts 
   "To Publish" and "To Distribute" into a single concept.)
-  
+
 * __To Subscribe:__ (_verb_). The action performed by a Subscriber Interface 
   to subscribe to receive Topic changes from a Publisher Interface. 
 
