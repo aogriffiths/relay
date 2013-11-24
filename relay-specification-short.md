@@ -156,7 +156,6 @@ behind Relay. In short:
 3. <a name="2.3"></a>
    __The Subscriber Interface:__ Because of points 1 and 2, Hubs and Subscribers can
    subscribe to Publishers or other Hubs. i.e. there a four scenarios:
-
      * Hub subscribes to a Publisher.
      * Hub subscribes to a Hub.
      * Subscriber subscribes direct to a Publisher.
@@ -165,7 +164,6 @@ behind Relay. In short:
    More simply the Publisher and Hub can both be seen as adhering to a Publisher
    Interface and the Hub an Subscriber can both be seen as adhering to a
    Subscriber Interface, which reduces it to one scenario: 
-
      * The Subscriber Interface subscribes to the Publisher Interface
 
 4. <a name="2.4"></a>
@@ -178,8 +176,7 @@ behind Relay. In short:
       * Hub publishes to a Subscriber.
 
   Or more simply:
-
-      * The Publisher Interface publishes to the Subscriber Interface
+  * The Publisher Interface publishes to the Subscriber Interface
 
 ### Specific Definitions (Normative)
 
