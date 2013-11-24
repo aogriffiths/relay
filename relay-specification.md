@@ -224,17 +224,15 @@ behind Relay. In short:
 These are defined by PuSH and the following definitions provide the salient 
 points as they relate to Relay.
 
-![P](P.png)  
-__Publisher:__ (_noun_). The entity that masters all updates to a Topic and
-makes them available using the PuSH/Relay protocols. 
 
-![H](H.png)  
-__Hub:__ An entity that receives updates to a Topic from a Publisher and 
-distributes them to Subscribers. 
-
-![S](S.png)  
-__Subscriber:__ (_noun_). An entity that receives updates to a Topic.
-
+* __Publisher:__ (_noun_). The entity that masters all updates to a Topic and
+makes them available using the PuSH/Relay protocols.   
+Symbol: ![P](P.png)
+* __Hub:__ An entity that receives updates to a Topic from a Publisher and 
+distributes them to Subscribers.   
+Symbol: ![H](H.png)
+* __Subscriber:__ (_noun_). An entity that receives updates to a Topic.   
+Symbol: ![S](S.png)
 * __To Publish:__ (_verb_). The action a Publisher takes to notify Hubs of changes 
   to a Topic.
 * __To Distribute:__ (_verb_). The action a Hub takes to notify Subscribers of 
@@ -245,19 +243,22 @@ __Subscriber:__ (_noun_). An entity that receives updates to a Topic.
 
 ##### Relay Interfaces and Actions
 
-![PI](PI.png)  
-__The Publisher Interface:__ (_noun_). The interface that includes:
+* __The Publisher Interface:__ (_noun_). The interface that includes:
    1. Everything a PuSH Hub does to Distribute Topic changes.
    2. Everything a PuSH Hub does to accept Subscription requests.
 
-![SI](SI.png)  
-__The Subscriber Interface:__ (_noun_). The interface that includes:
+Symbol: ![PI](PI.png)
+
+* __The Subscriber Interface:__ (_noun_). The interface that includes:
    1. Everything a PuSH Subscriber does to receive Distributed topics changes.
    2. Everything a PuSH Subscriber does to make Subscription requests.
+
+Symbol: ![SI](SI.png)  
 
 * __To Publish:__ (_verb_). The action performed by a Publisher Interface 
   to send Topic changes to a Subscriber Interface. (Combines the PuSH concepts 
   "To Publish" and "To Distribute" into a single concept.)
+  
 * __To Subscribe:__ (_verb_). The action performed by a Subscriber Interface 
   to subscribe to receive Topic changes from a Publisher Interface. 
 
