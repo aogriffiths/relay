@@ -102,20 +102,21 @@ Key
 
 |                    | PuSH                                  | Relay                                 |
 | ------------------ |:------------------------------------- |:------------------------------------- |
-|1. Hosts the Topic and supports Hub Discovery  |   ![P](P.png)![B](B.png)![B](B.png)   |   ![P](P.png)![B](B.png)![B](B.png)   |
-|2. Published From   |   ![P](P.png)![B](B.png)![B](B.png)   |   ![P](P.png)![H](H.png)![B](B.png)   |
-|3. Distributed From |   ![B](B.png)![H](H.png)![B](B.png)   |   ![P](P.png)![H](H.png)![B](B.png)   (a)|
-|4. Subscribed To    |   ![B](B.png)![H](H.png)![B](B.png)   |   ![P](P.png)![H](H.png)![B](B.png)   |
-|5. Published To     |   ![B](B.png)![H](H.png)![B](B.png)   |   ![B](B.png)![H](H.png)![S](S.png)   (b)|
-|6. Distributed To   |   ![B](B.png)![B](B.png)![S](S.png)   |   ![B](B.png)![H](H.png)![S](S.png)   |
-|7. Subscribed From  |   ![B](B.png)![B](B.png)![S](S.png)   |   ![B](B.png)![H](H.png)![S](S.png)   |
+|1. Hosts the Topic and supports Hub discovery  |   ![P](P.png)![B](B.png)![B](B.png)   |   ![P](P.png)![B](B.png)![B](B.png)   |
+|2. Published from   |   ![P](P.png)![B](B.png)![B](B.png)   |   ![P](P.png)![H](H.png)![B](B.png)   |
+|3. Distributed from |   ![B](B.png)![H](H.png)![B](B.png)   |   ![P](P.png)![H](H.png)![B](B.png)   (a)|
+|4. Subscribed to    |   ![B](B.png)![H](H.png)![B](B.png)   |   ![P](P.png)![H](H.png)![B](B.png)   |
+|5. Published to     |   ![B](B.png)![H](H.png)![B](B.png)   |   ![B](B.png)![H](H.png)![S](S.png)   (b)|
+|6. Distributed to   |   ![B](B.png)![B](B.png)![S](S.png)   |   ![B](B.png)![H](H.png)![S](S.png)   |
+|7. Subscribed from  |   ![B](B.png)![B](B.png)![S](S.png)   |   ![B](B.png)![H](H.png)![S](S.png)   |
 
 What does this mean?
 
-1. Relay Publishers can do everything a PuSH Publisher do. Likewise for Relay Hubs can do the same as PuSH Hubs and Relay Subscribers do the same as PuSH Subscribers.
-2. In Relay To Publish and To Distribute mean the same thing which is why (a) a Relay Publisher is indicated as able to Distribute content and (b) A Relay Subscriber is indicated as able to be published to.
-3. Relay Publishers can always be Subscribed to. Arguable PuSH supports this too because PuSH Publishers must always have Hubs. However Relay goes further and specifies that Hubs to subscribe to Publishers using the same protocol as Subscribers subscribe to Publishers.
-4. The final, and coolest part of it all, is a Relay Hub simply combines the Publisher and the Subscriber capabilities. It Subscribes to a Topic and re-publishes (or "relays") it. There is only one exception to this rule, a Relay Hub does not need to host the Topic for discovery, that is left to be the role of the original Publisher alone (However the idea of having a Hub represent a Topic is likely to be the subject of a Relay extension coming soon...)
+1. Relay Publishers do everything PuSH Publishers do, and more. The main point being Relay Publishers can be subscribed to (from Hubs or directly from Subscribers).
+2. Relay Hubs do everything PuSH Hubs do, and more. The main point being Relay Hubs can be subscribed from (to other Hubs or to Publishers).
+3. Relay Subscribers do the same as PuSH Subscribers.
+4. In Relay To Publish and To Distribute mean the same thing which is why (a) Topics can be distributed from a Relay Publisher and (b) A Relay Subscriber is able to be published to. Publishing and Distributing are synonymous with Relay.
+5. The final, and coolest part of it all, is a Relay Hub simply combines the Publisher and the Subscriber capabilities. It Subscribes to a Topic and re-publishes (or "relays") it. There is only one exception to this rule, a Relay Hub does not need to host the Topic for discovery, that is left to be the role of the original Publisher alone (However the idea of having a Hub represent a Topic is likely to be the subject of a Relay extension coming soon...)
 
 <br/>
 <a name="1."></a>
