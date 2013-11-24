@@ -190,29 +190,29 @@ behind Relay. In short:
    __The Subscriber Interface:__ Because of points 1 and 2, Hubs and Subscribers can
    subscribe to Publishers or other Hubs. i.e. there a four scenarios:
 
-        * Hub subscribes to a Publisher.
-        * Hub subscribes to a Hub.
-        * Subscriber subscribes direct to a Publisher.
-        * Subscriber subscribes to a Hub.
+     * Hub subscribes to a Publisher.
+     * Hub subscribes to a Hub.
+     * Subscriber subscribes direct to a Publisher.
+     * Subscriber subscribes to a Hub.
 
    More simply the Publisher and Hub can both be seen as adhering to a Publisher
    Interface and the Hub an Subscriber can both be seen as adhering to a
    Subscriber Interface, which reduces it to one scenario: 
 
-        * The Subscriber Interface subscribes to the Publisher Interface
+     * The Subscriber Interface subscribes to the Publisher Interface
 
 4.<a name="2.4"></a>
    __The Publisher Interface:__ Publishing updates happens in the reverse 
    direction to subscribing. i.e. there are four scenarios:
 
-        * Publisher publishes to a Hub.
-        * Hub publishes to a Hub.
-        * Publisher publishes direct to a Subscriber.
-        * Hub publishes to a Subscriber.
+      * Publisher publishes to a Hub.
+      * Hub publishes to a Hub.
+      * Publisher publishes direct to a Subscriber.
+      * Hub publishes to a Subscriber.
 
   Or more simply:
-  
-        * The Publisher Interface publishes to the Subscriber Interface
+
+      * The Publisher Interface publishes to the Subscriber Interface
 
 ### Specific Definitions (Normative)
 
